@@ -5,14 +5,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Car, MapPin } from 'lucide-react';
 
 // Replace with your Mapbox token
-// mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const MumbaiCarpooling = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [activeRouteId, setActiveRouteId] = useState(null);
     const markersRef = useRef([]);
-    const [mounted, setMounted] = useState(false);
+    const [mapLoaded, setMapLoaded] = useState(false);
 
     // Sample routes data
     const routes = [
@@ -52,66 +52,89 @@ const MumbaiCarpooling = () => {
         }
     ];
 
+    // Initialize map
     useEffect(() => {
-        if (!mounted) {
-            // Initialize map
-            map.current = new mapboxgl.Map({
-                container: mapContainer.current,
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [72.8777, 19.0760], // Mumbai
-                zoom: 11
-            });
+        if (map.current) return;
 
-            // Add navigation control
-            map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [72.8777, 19.0760], // Mumbai
+            zoom: 11
+        });
 
-            map.current.on('load', () => {
-                // Add source and layer for routes
-                map.current.addSource('routes', {
+        // Add navigation control
+        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+        // Wait for map to load before adding sources and layers
+        map.current.on('load', () => {
+            // Initialize sources and layers for each route
+            routes.forEach(route => {
+                // Add source
+                map.current.addSource(`route-${route.id}`, {
                     type: 'geojson',
                     data: {
-                        type: 'FeatureCollection',
-                        features: []
+                        type: 'Feature',
+                        properties: { active: false },
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: [
+                                route.rider1.location,
+                                route.rider2.location,
+                                route.destination.location
+                            ]
+                        }
                     }
                 });
 
+                // Add layer
                 map.current.addLayer({
-                    id: 'routes',
+                    id: `route-${route.id}`,
                     type: 'line',
-                    source: 'routes',
+                    source: `route-${route.id}`,
                     layout: {
                         'line-join': 'round',
                         'line-cap': 'round'
                     },
                     paint: {
                         'line-color': '#2563eb',
-                        'line-width': 3,
-                        'line-opacity': 0.8
+                        'line-width': 2,
+                        'line-opacity': 0.4
                     }
                 });
-
-                setMounted(true);
             });
 
-            // Cleanup
-            return () => {
+            setMapLoaded(true);
+        });
+
+        return () => {
+            if (map.current) {
                 map.current.remove();
-                markersRef.current.forEach(marker => marker.remove());
-            };
-        }
+            }
+        };
     }, []);
 
-    // Update markers and routes when active route changes
+    // Update markers and route styles
     useEffect(() => {
-        if (!mounted) return;
+        if (!mapLoaded) return;
 
         // Clear existing markers
         markersRef.current.forEach(marker => marker.remove());
         markersRef.current = [];
 
-        // Update routes and markers
+        // Update routes and add markers
         routes.forEach(route => {
             const isActive = route.id === activeRouteId;
+
+            // Update route style
+            if (map.current.getSource(`route-${route.id}`)) {
+                map.current.setPaintProperty(`route-${route.id}`, 'line-width',
+                    isActive ? 4 : 2
+                );
+                map.current.setPaintProperty(`route-${route.id}`, 'line-opacity',
+                    isActive ? 0.8 : 0.4
+                );
+            }
 
             // Add markers for pickup points
             const rider1Marker = new mapboxgl.Marker({ color: '#22c55e' })
@@ -152,28 +175,8 @@ const MumbaiCarpooling = () => {
                 .addTo(map.current);
 
             markersRef.current.push(rider1Marker, rider2Marker, destMarker);
-
-            if (isActive) {
-                // Create route line by connecting rider1, rider2, and destination
-                const routeFeature = {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'LineString',
-                        coordinates: [
-                            route.rider1.location, // First pickup point
-                            route.rider2.location, // Second pickup point
-                            route.destination.location // Destination
-                        ]
-                    }
-                };
-
-                map.current.getSource('routes').setData({
-                    type: 'FeatureCollection',
-                    features: [routeFeature]
-                });
-            }
         });
-    }, [activeRouteId, mounted]);
+    }, [activeRouteId, mapLoaded]);
 
     return (
         <Card className="w-full max-w-4xl">
@@ -197,9 +200,13 @@ const MumbaiCarpooling = () => {
                             <div className="w-4 h-4 rounded-full bg-green-500"></div>
                             <span className="text-sm">Pickup Points</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mb-2">
                             <div className="w-4 h-4 rounded-full bg-red-500"></div>
                             <span className="text-sm">Destinations</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-1 bg-blue-600"></div>
+                            <span className="text-sm">Route</span>
                         </div>
                     </div>
                 </div>

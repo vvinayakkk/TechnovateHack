@@ -11,7 +11,7 @@ const MainLayout = () => {
       <header className="mb-5 lg:mb-1 pr-4 pt-3 flex justify-between items-center">
         <h1 className="text-2xl"></h1>
         <div className="flex justify-around">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           <User />
         </div>
       </header>

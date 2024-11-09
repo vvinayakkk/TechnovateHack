@@ -36,7 +36,7 @@ const useScrollAnimation = () => {
   return { ref, controls, isVisible }
 }
 
-export default function CoolLandingPage() {
+export default function EcoLandingPage() {
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { scrollYProgress } = useScroll()
@@ -65,7 +65,7 @@ export default function CoolLandingPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-2xl font-bold">EcoTrack</h1>
+            <h1 className="text-2xl font-bold">EcoVision</h1>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -92,8 +92,8 @@ export default function CoolLandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-center z-10"
           >
-            <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Track Your Carbon Footprint</h2>
-            <p className="text-xl md:text-2xl mb-8">Take control of your environmental impact and make a difference.</p>
+            <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Championing a Greener Future</h2>
+            <p className="text-xl md:text-2xl mb-8">Explore sustainable innovations for a healthier planet</p>
             <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
               if (isSignedIn) {
                 navigate('/dashboard');
@@ -101,7 +101,7 @@ export default function CoolLandingPage() {
                 navigate('/signin');
               }
             }}>
-              Get Started
+              Join the Movement
             </Button>
           </motion.div>
           <motion.div
@@ -113,7 +113,7 @@ export default function CoolLandingPage() {
             {[...Array(50)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute rounded-full bg-green-200/10"
+                className="absolute rounded-full bg-primary/10"
                 style={{
                   width: Math.random() * 100 + 50,
                   height: Math.random() * 100 + 50,
@@ -152,14 +152,14 @@ export default function CoolLandingPage() {
               transition={{ duration: 0.5 }}
               className="mb-20"
             >
-              <h3 className="text-3xl font-bold mb-6">Why Track Your Carbon Footprint?</h3>
-              <p className="text-xl">Understanding your carbon impact is the first step to reducing it. Here’s how we can help:</p>
+              <h3 className="text-3xl font-bold mb-6">Eco-Conscious Features</h3>
+              <p className="text-xl">Discover solutions designed to reduce your environmental footprint.</p>
             </motion.div>
             <div className="grid md:grid-cols-3 gap-10">
               {[
-                { title: "Personalized Insights", description: "Track your daily activities and see how they impact your carbon footprint." },
-                { title: "Effective Suggestions", description: "Get personalized suggestions to reduce your carbon impact based on your lifestyle." },
-                { title: "Sustainable Choices", description: "Discover more sustainable alternatives to your everyday choices." }
+                { title: "AI-Driven Sustainability", description: "Leveraging AI to optimize energy and reduce waste" },
+                { title: "Eco-Friendly Materials", description: "Built with resources that respect our planet" },
+                { title: "Seamless Green Integration", description: "Easily adaptable to support green business initiatives" }
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -189,12 +189,12 @@ export default function CoolLandingPage() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-3xl font-bold mb-6">Start Reducing Your Footprint Today</h3>
-              <p className="text-xl mb-8">Join us in the movement to make the world a greener place, one step at a time.</p>
+              <h3 className="text-3xl font-bold mb-6">Ready to Make a Positive Impact?</h3>
+              <p className="text-xl mb-8">Join us in creating a sustainable future, one step at a time.</p>
               <Button size="lg" className="text-lg px-8 py-6" onClick={() => {
                 navigate('/signup')
               }}>
-                Get Started Now
+                Start Your Journey
               </Button>
             </motion.div>
           </div>
@@ -203,7 +203,7 @@ export default function CoolLandingPage() {
 
       <footer className="bg-muted py-10">
         <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 EcoTrack. All rights reserved. Together, we can make a difference.</p>
+          <p>&copy; 2024 EcoVision. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toaster } from 'sonner';
-import useTheme from '@/hooks/useTheme';
 
 export default function EventPage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
-  // Demo data for registered events
+  // Ensure theme is applied on initial load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
   const registeredEvents = [
     {
       _id: "1",
@@ -37,7 +46,6 @@ export default function EventPage() {
     },
   ];
 
-  // Filter events based on the search term
   const filteredRegistrationEvents = registeredEvents.filter(event =>
     event.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
     event.eventDescription.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
@@ -58,7 +66,7 @@ export default function EventPage() {
         <Card
           key={event._id}
           onClick={() => handleCardClick(event)}
-          className="hover:shadow-xl transition-shadow border-2 border-dashed border-orange-500 duration-300 ease-in-out cursor-pointer relative"
+          className={`hover:shadow-xl transition-shadow border-2 border-dashed border-orange-500 duration-300 ease-in-out cursor-pointer relative ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
         >
           {index < 3 && (
             <span className="absolute top-2 right-2 text-xl">🔥</span>
@@ -89,21 +97,21 @@ export default function EventPage() {
 
   const Modal = ({ event, onClose }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white dark:bg-slate-950 p-8 rounded-lg w-11/12 sm:w-3/4 md:w-1/2 max-w-3xl">
-        <h3 className="text-2xl font-semibold mb-2 text-dark dark:text-white">{event.title}</h3>
-        <p className="text-sm mb-4 text-dark dark:text-muted-foreground">{event.eventDescription}</p>
+      <div className={`p-8 rounded-lg w-11/12 sm:w-3/4 md:w-1/2 max-w-3xl ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-white text-black'}`}>
+        <h3 className="text-2xl font-semibold mb-2">{event.title}</h3>
+        <p className="text-sm mb-4">{event.eventDescription}</p>
         <div className="mb-4">
           <img src={event.image} alt={event.title} className="w-full h-60 object-cover rounded-lg" />
         </div>
-        <div className="flex items-center mb-2 text-sm text-dark dark:text-white">
+        <div className="flex items-center mb-2 text-sm">
           <MapPin className="w-4 h-4 mr-2" />
           <span>{event.location}</span>
         </div>
-        <div className="flex items-center mb-2 text-sm text-dark dark:text-white">
+        <div className="flex items-center mb-2 text-sm">
           <Calendar className="w-4 h-4 mr-2" />
           <span>{new Date(event.eventDate).toLocaleDateString()}</span>
         </div>
-        <div className="flex items-center text-sm mb-4 text-dark dark:text-white">
+        <div className="flex items-center text-sm mb-4">
           <DollarSign className="w-4 h-4 mr-2" />
           <span>{event.registrationFee}</span>
         </div>
@@ -114,11 +122,10 @@ export default function EventPage() {
 
   return (
     <>
-      {/* <Navbar /> */}
       <div className="container mx-auto p-3">
         <Toaster richColors />
         <div className="text-center mt-4">
-          <h2 className="text-3xl font-bold dark:text-white">Explore Events</h2>
+          <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Explore Events</h2>
           <p className="mt-2 text-muted-foreground">Discover and register for upcoming events</p>
         </div>
         <div className="flex justify-center items-center mt-6">
@@ -126,7 +133,7 @@ export default function EventPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search events"
-            className="w-full sm:w-1/2"
+            className="w-full"
           />
           <Button className="ml-2 bg-orange-500 hover:bg-orange-400">
             <Search className="w-4 h-4 mr-1" />
@@ -134,7 +141,7 @@ export default function EventPage() {
           </Button>
         </div>
         <div className="mt-8">
-          <h2 className="text-2xl font-bold dark:text-white text-center mb-4">Registered Events</h2>
+          <h2 className={`text-2xl font-bold text-center mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Registered Events</h2>
           <EventCards events={filteredRegistrationEvents} />
         </div>
         {selectedEvent && <Modal event={selectedEvent} onClose={closeModal} />}
