@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Search, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from 'sonner';
 
 export default function EventPage() {
+  const [events, setEvents] = useState([]);  // Initialize as an empty array
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+<<<<<<< Updated upstream
   const registeredEvents = [
     {
       _id: "1",
@@ -33,11 +36,36 @@ export default function EventPage() {
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyvetnLOz5AF4JPJGxqw0EJpwpBHl9swwqww&s"
     },
   ];
+=======
+  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
-  const filteredRegistrationEvents = registeredEvents.filter(event =>
-    event.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-    event.eventDescription.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-    event.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  // Fetch events data from backend
+  useEffect(() => {
+    axios.get('http://localhost:3000/event/get-events')
+      .then((response) => {
+        const data = response.data;
+        setEvents(data.events); // Ensure events is an array
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+        setEvents([]); // Default to empty array on error
+      });
+  }, []);
+>>>>>>> Stashed changes
+
+  const filteredEvents = events.filter(event =>
+    event.title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    event.description?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    event.location?.address?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
   const handleCardClick = (event) => {
@@ -50,29 +78,26 @@ export default function EventPage() {
 
   const EventCards = ({ events }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-      {events.map((event, index) => (
+      {events.map((event) => (
         <Card
           key={event._id}
           onClick={() => handleCardClick(event)}
           className={`hover:shadow-xl transition-shadow border-2 border-dashed border-orange-500 duration-300 ease-in-out cursor-pointer relative ${isDarkMode ? 'bg-slate-800 text-white' : 'bg-white text-black'}`}
         >
-          {index < 3 && (
-            <span className="absolute top-2 right-2 text-xl">🔥</span>
-          )}
           <CardContent className="p-4">
-            <h3 className="text-lg font-semibold mb-2 truncate">{event.eventDescription}</h3>
-            <p className="text-sm text-muted-foreground mb-4">{event.eventFormat === "online" ? "Online" : "Offline"}</p>
+            <h3 className="text-lg font-semibold mb-2 truncate">{event.title}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{event.description}</p>
             <div className="flex items-center text-sm text-muted-foreground mb-2">
               <MapPin className="w-4 h-4 mr-2" />
-              <span className="truncate">{event.location}</span>
+              <span className="truncate">{event.location?.address}, {event.location?.city}, {event.location?.country}</span>
             </div>
             <div className="flex items-center text-sm text-muted-foreground mb-2">
               <Calendar className="w-4 h-4 mr-2" />
-              <span>{new Date(event.eventDate).toLocaleDateString()}</span>
+              <span>{new Date(event.date).toLocaleDateString()} at {event.time}</span>
             </div>
             <div className="flex items-center text-sm text-muted-foreground mb-2">
               <DollarSign className="w-4 h-4 mr-2" />
-              <span>{event.registrationFee === "Free" ? "Free" : event.registrationFee}</span>
+              <span>{event.price === 0 ? "Free" : `$${event.price}`}</span>
             </div>
             <div className="text-sm text-muted-foreground mb-2">
               <strong>Max Attendees:</strong> {event.maxAttendees}
@@ -87,21 +112,18 @@ export default function EventPage() {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className={`p-8 rounded-lg w-11/12 sm:w-3/4 md:w-1/2 max-w-3xl ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-white text-black'}`}>
         <h3 className="text-2xl font-semibold mb-2">{event.title}</h3>
-        <p className="text-sm mb-4">{event.eventDescription}</p>
-        <div className="mb-4">
-          <img src={event.image} alt={event.title} className="w-full h-60 object-cover rounded-lg" />
-        </div>
+        <p className="text-sm mb-4">{event.description}</p>
         <div className="flex items-center mb-2 text-sm">
           <MapPin className="w-4 h-4 mr-2" />
-          <span>{event.location}</span>
+          <span>{event.location?.address}, {event.location?.city}, {event.location?.country}</span>
         </div>
         <div className="flex items-center mb-2 text-sm">
           <Calendar className="w-4 h-4 mr-2" />
-          <span>{new Date(event.eventDate).toLocaleDateString()}</span>
+          <span>{new Date(event.date).toLocaleDateString()} at {event.time}</span>
         </div>
         <div className="flex items-center text-sm mb-4">
           <DollarSign className="w-4 h-4 mr-2" />
-          <span>{event.registrationFee}</span>
+          <span>{event.price === 0 ? "Free" : `$${event.price}`}</span>
         </div>
         <Button onClick={onClose} variant="outline" className="w-full">Close</Button>
       </div>
@@ -130,7 +152,7 @@ export default function EventPage() {
         </div>
         <div className="mt-8">
           <h2 className={`text-2xl font-bold text-center mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Registered Events</h2>
-          <EventCards events={filteredRegistrationEvents} />
+          <EventCards events={filteredEvents} />
         </div>
         {selectedEvent && <Modal event={selectedEvent} onClose={closeModal} />}
       </div>

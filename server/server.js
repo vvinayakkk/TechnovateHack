@@ -1,18 +1,22 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import cors from 'cors';
 import "dotenv/config"
 
-import {connectDB} from './services/index.js';
-import {logger} from "./utils/index.js"
-import {userRouter,frinedsRouter,eventRouter} from "./routers/index.js"
+import { connectDB } from './services/index.js';
+import { logger } from "./utils/index.js"
+import { userRouter, frinedsRouter, eventRouter } from "./routers/index.js"
 
 connectDB();
 
 const app = express();
 const PORT = process.env.PORT;
 
-
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 

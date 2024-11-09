@@ -14,6 +14,9 @@ import {
   CarIcon, HomeIcon, UtensilsIcon
 } from "lucide-react";
 
+// const { user } = useUser();
+// const userID = user?.id;
+
 // Enhanced dashboard card with hover effects and click interaction
 const DashboardCard = ({ title, value, subtitle, icon: Icon, trend }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -281,8 +284,8 @@ export default function Dashboard() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className={`px-3 py-1 rounded-full text-sm ${selectedMetric === metric
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-100 text-gray-600'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-100 text-gray-600'
                         }`}
                       onClick={() => setSelectedMetric(metric)}
                     >
