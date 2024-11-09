@@ -5,6 +5,7 @@ import "dotenv/config"
 
 import {connectDB} from './services/index.js';
 import {logger} from "./utils/index.js"
+import {userRouter} from "./routers/index.js"
 
 connectDB();
 
@@ -15,7 +16,7 @@ const PORT = process.env.PORT;
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-
+app.use('/user', userRouter);
 
 
 
