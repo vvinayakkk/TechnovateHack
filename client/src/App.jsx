@@ -11,7 +11,6 @@ import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
 
-// Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
   const username = user?.username || "Buddy";
@@ -44,7 +43,7 @@ const App = () => {
       <Routes>
       {/* Routes without Layout */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signup" element={<SignUp signInUrl='/events'/>} />
       <Route path="/signin" element={<SignIn />} />
 
       {/* Routes with Layout */}
