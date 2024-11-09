@@ -7,10 +7,11 @@ import LandingPage from '@/pages/LandingPage';
 import MainLayout from './layouts/MainLayout';
 import Leaderboard from './pages/Leaderboard';
 import Events from './pages/Events';
+import Dashboard from './pages/Dashboard';
 import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
-import Dashboard from './pages/Dashboard';
+
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -19,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      navigate('/signup');
+        navigate('/signup');
     }
   }, [isLoaded, isSignedIn, navigate]);
 
@@ -31,7 +32,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Pass `username` as a prop if rendering `Dashboard`
+  // // Pass `username` as a prop if rendering `Dashboard`
   return isSignedIn ? (
     <Outlet context={{ username }} />
   ) : null;
@@ -42,23 +43,22 @@ const App = () => {
     <div>
       <Toaster position="bottom-right" richColors />
       <Routes>
-      {/* Routes without Layout */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<SignUp signInForceRedirectUrl='/events'/>} />
-      <Route path="/signin" element={<SignIn signUpForceRedirectUrl='/events' />} />
+        {/* Routes without Layout */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<SignUp signInUrl='/events' />} />
+        <Route path="/signin" element={<SignIn />} />
 
-
-      {/* Routes with Layout */}
-      <Route element={<MainLayout />}>
-        <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/donations" element={<Donations />} />
-          <Route path="/analytics" element={<Analytics />} />
+        {/* Routes with Layout */}
+        <Route element={<MainLayout />}>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/donations" element={<Donations />} />
+            <Route path="/analytics" element={<Analytics />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
     </div>
   );
 };

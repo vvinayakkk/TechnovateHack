@@ -4,6 +4,7 @@ import { Moon, Sun, ChevronDown } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import useTheme from '@/hooks/useTheme'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '@clerk/clerk-react';
 
 const useScrollAnimation = () => {
   const controls = useAnimation()
@@ -39,6 +40,7 @@ export default function CoolLandingPage() {
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { scrollYProgress } = useScroll()
+  const { isSignedIn } = useUser();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -93,7 +95,11 @@ export default function CoolLandingPage() {
             <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Welcome to the Future</h2>
             <p className="text-xl md:text-2xl mb-8">Experience innovation like never before</p>
             <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
-              navigate('/signup')
+              if (isSignedIn) {
+                navigate('/leaderboard');
+              } else {
+                navigate('/signin');
+              }
             }}>
               Get Started
             </Button>
