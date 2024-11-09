@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
-import { Activity, ShoppingBag, Car, Trash2, Tv, ShoppingCart, TrendingDown, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Activity, ShoppingBag, Car, Trash2, Tv, ShoppingCart, TrendingDown, TrendingUp, AlertTriangle, CheckCircle, Info, Clock, Calendar } from 'lucide-react';
 import axios from 'axios';
 
 const Analytics = () => {
@@ -421,35 +421,93 @@ const Analytics = () => {
                 <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {analysisData.comparisons.grocery.standard_deviations > 0 && (
-                    <Alert>
-                      <Info className="h-4 w-4" />
-                      <AlertTitle>Grocery Impact</AlertTitle>
-                      <AlertDescription>
-                        Consider buying more local, seasonal produce and reducing packaged goods to lower your grocery-related emissions.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  {analysisData.comparisons.vehicleDistance.standard_deviations > 0 && (
-                    <Alert>
-                      <Info className="h-4 w-4" />
-                      <AlertTitle>Vehicle Usage</AlertTitle>
-                      <AlertDescription>
-                        Try carpooling, using public transport, or combining trips to reduce your vehicle emissions.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  {analysisData.comparisons.wasteBags.standard_deviations > 0 && (
-                    <Alert>
-                      <Info className="h-4 w-4" />
-                      <AlertTitle>Waste Generation</AlertTitle>
-                      <AlertDescription>
-                        Focus on reducing waste through composting and recycling. Consider adopting zero-waste alternatives.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </div>
+                {analysisData.recommendations && analysisData.recommendations[0] && (
+                  <div className="space-y-6">
+                    {/* Immediate Actions */}
+                    {analysisData.recommendations[0].immediate_actions?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Immediate Actions
+                        </h3>
+                        {analysisData.recommendations[0].immediate_actions.map((action, index) => (
+                          <Alert key={index}>
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2">
+                              {action.action}
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                action.impact_level === 'High' ? 'bg-red-100 text-red-800' :
+                                action.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {action.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription>
+                              {action.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Medium Term Goals */}
+                    {analysisData.recommendations[0].medium_term_goals?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Medium Term Goals
+                        </h3>
+                        {analysisData.recommendations[0].medium_term_goals.map((goal, index) => (
+                          <Alert key={index}>
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2">
+                              {goal.action}
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                goal.impact_level === 'High' ? 'bg-red-100 text-red-800' :
+                                goal.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {goal.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription>
+                              {goal.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Long Term Changes */}
+                    {analysisData.recommendations[0].long_term_changes?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4" />
+                          Long Term Changes
+                        </h3>
+                        {analysisData.recommendations[0].long_term_changes.map((change, index) => (
+                          <Alert key={index}>
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2">
+                              {change.action}
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                change.impact_level === 'High' ? 'bg-red-100 text-red-800' :
+                                change.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {change.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription>
+                              {change.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
