@@ -8,6 +8,7 @@ import MainLayout from './layouts/MainLayout';
 import Leaderboard from './pages/Leaderboard';
 import Events from './pages/Events';
 import Dashboard from './pages/Dashboard';
+import Map from './pages/Map';
 import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/map" element={<Map />} />
             <Route path="/donate" element={<Donations />} />
             <Route path="/analytics" element={<Analytics />} />
 

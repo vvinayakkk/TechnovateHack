@@ -60,9 +60,9 @@ const Navbar = () => {
                     </div>
 
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
-                        <Link to="/maps" className="flex justify-start items-center">
+                        <Link to="/map" className="flex justify-start items-center">
                             <BarChart className="h-4 w-4 mr-2" />
-                            <p className="text-sm font-pop">Maps</p>
+                            <p className="text-sm font-pop">Car Pooling</p>
                         </Link>
                     </div>
 
