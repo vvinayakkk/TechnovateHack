@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useSpring, useAnimation } from 'framer
 import { Moon, Sun, ChevronDown } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import useTheme from '@/hooks/useTheme'
+import { useNavigate } from 'react-router-dom'
 
 const useScrollAnimation = () => {
   const controls = useAnimation()
@@ -35,6 +36,7 @@ const useScrollAnimation = () => {
 }
 
 export default function CoolLandingPage() {
+  const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
@@ -90,7 +92,9 @@ export default function CoolLandingPage() {
           >
             <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Welcome to the Future</h2>
             <p className="text-xl md:text-2xl mb-8">Experience innovation like never before</p>
-            <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6">
+            <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
+              navigate('/signup')
+            }}>
               Get Started
             </Button>
           </motion.div>
@@ -181,7 +185,9 @@ export default function CoolLandingPage() {
             >
               <h3 className="text-3xl font-bold mb-6">Ready to Transform Your Experience?</h3>
               <p className="text-xl mb-8">Join us on this exciting journey into the future.</p>
-              <Button size="lg" className="text-lg px-8 py-6">
+              <Button size="lg" className="text-lg px-8 py-6" onClick={() => {
+                navigate('/signup')
+              }}>
                 Get Started Now
               </Button>
             </motion.div>

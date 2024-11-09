@@ -9,6 +9,7 @@ import Leaderboard from './pages/Leaderboard';
 import Events from './pages/Events';
 import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
+import { Loader2 } from 'lucide-react';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
