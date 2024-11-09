@@ -5,10 +5,10 @@
 @layer base {
   :root {
     --text: 224 24% 9%;
-    --background: 220 26% 95%;
-    --primary: 223 24% 28%;
-    --secondary: 354 25% 70%;
-    --accent: 44 25% 43%;
+    --background: 0 0% 100%;
+    --primary: 240 5.9% 10%;
+    --secondary: 240 4.8% 95.9%;
+    --accent: 240 4.8% 95.9%;
     
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -38,14 +38,15 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --accent-foreground: 240 5.9% 10%;
   }
 
   .dark {
     --text: 330 16% 93%;
-    --background: 330 14% 5%;
-    --primary: 326 16% 71%;
-    --secondary: 137 16% 31%;
-    --accent: 196 16% 59%;
+    --background: 240 10% 3.9%;
+    --primary: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --accent: 240 3.7% 15.9%;
 
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -71,6 +72,11 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 
   * {
@@ -86,5 +92,15 @@
 ::-webkit-scrollbar {
   width: 0px; 
   height: 0px; 
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
