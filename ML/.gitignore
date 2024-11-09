@@ -1,0 +1,5 @@
+.env
+*pyc
+myenv/
+db.sqlite3
+temp_uploads/

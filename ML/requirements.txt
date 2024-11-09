@@ -1,0 +1,11 @@
+django==4.2.0
+djangorestframework==3.14.0
+djongo==1.3.6
+pymongo==3.12.3
+torch==2.1.0
+torchaudio==2.1.0
+transformers==4.35.0
+spacy==3.7.2
+nemo-toolkit[all]==1.20.0
+langchain-google-genai==0.0.3
+python-dotenv==1.0.0
