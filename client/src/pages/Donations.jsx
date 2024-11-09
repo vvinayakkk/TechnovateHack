@@ -326,7 +326,7 @@ const StatCard = ({ number, title, description, action, icon }) => {
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <Card className="overflow-hidden relative group">
+      <Card className="overflow-hidden relative group motion-preset-blur-right">
         <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
         <CardHeader className="relative z-10 transition-colors duration-500 group-hover:text-white">
           <div className="flex items-center space-x-2">
