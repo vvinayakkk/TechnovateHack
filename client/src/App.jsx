@@ -13,6 +13,8 @@ import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
 import UserDataInput from './pages/UserDataInput';
+import CustomSignUp from './pages/CustomSignUp';
+import CustomSignIn from './pages/CustomSignIn';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -48,8 +50,8 @@ const App = () => {
       <Routes>
         {/* Routes without Layout */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUp signInForceRedirectUrl='/dashboard' />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<CustomSignUp signInForceRedirectUrl='/dashboard' />} />
+        <Route path="/signin" element={<CustomSignIn signInForceRedirectUrl='/dashboard' />} />
         <Route path="/moredetails" element={<UserDataInput />} />
 
         {/* Routes with Layout */}

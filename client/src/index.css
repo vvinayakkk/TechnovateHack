@@ -2,14 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.grad {
+  background-image: linear-gradient(to right, #000000, #2a2129, #413f56, #426586, #2b90ac, #44a7bf, #5cbed3, #74d6e6, #a3def7, #cce6fe, #ecf1ff, #ffffff);
+}
 @layer base {
   :root {
---text: #05061a;
+    --text: #05061a;
     --background: #ecfae5;
     --primary: #3f7416;
     --secondary: #85e36d;
     --accent: #8ece27;
-    
+
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -82,18 +85,16 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-text;
   }
 }
 
-
 ::-webkit-scrollbar {
-  width: 0px; 
-  height: 0px; 
+  width: 0px;
+  height: 0px;
 }
-
 
 @layer base {
   * {
@@ -103,4 +104,3 @@
     @apply bg-background text-foreground;
   }
 }
-
