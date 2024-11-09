@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Eco-Friendly Product Finder",
+  "version": "1.0",
+  "description": "Find eco-friendly alternatives for Amazon products.",
+  "permissions": [
+    "notifications",
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.amazon.in/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "host_permissions": [
+    "http://192.168.137.37:8000/*"
+  ],
+  "icons": {
+    "128": "icons/icon.png"
+  }
+}
