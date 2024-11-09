@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   howLongTvpCDailyHour: { type: Number },
   howManyNewClothesMonthly: { type: Number },
   howLongInternetDailyHour: { type: Number },
-  energyEfficiency: { type: Boolean },
+  energyEfficiency: { type: String },
   recycling: { type: [String] },
   cookingWith: { type: [String] },
   carbonEmission: {
