@@ -14,6 +14,8 @@ import {
   TreesIcon
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useUser } from "@clerk/clerk-react";
+import axios from 'axios';
 
 // Enhanced statistics card with animations
 const StatCard = ({ title, value, subtitle, icon: Icon, trend }) => (
@@ -71,6 +73,32 @@ const radarData = [
 ];
 
 export default function Dashboard() {
+  const { user } = useUser();
+  const userID = user?.id;
+  console.log(userID);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.post(`http://localhost:3000/user/get`, {
+          userID: userID
+        });
+        console.log(response.data); // Print the response data
+        console.log(response.data.user); // Print the response data
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
+          ...response.data.user
+        })
+        console.log(response2.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
   const [animationComplete, setAnimationComplete] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState('transport');
 
@@ -78,6 +106,10 @@ export default function Dashboard() {
     const timer = setTimeout(() => setAnimationComplete(true), 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  // useEffect(() => {
+  //   response = axios.get(`localhost:3000/user/${userID}`)
+  // }, []);
 
   return (
     <div className="min-h-screen p-8">

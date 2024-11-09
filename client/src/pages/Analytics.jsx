@@ -5,10 +5,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { Activity, ShoppingBag, Car, Trash2, Tv, ShoppingCart, TrendingDown, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import axios from 'axios';
 
 const Analytics = () => {
   const [analysisData, setAnalysisData] = useState(null);
-  
+
   // Approximation of the error function (erf)
   const erf = (x) => {
     // Constants
@@ -30,61 +31,71 @@ const Analytics = () => {
     return sign * y;
   };
 
-  const calculateAnalysis = () => {
+  const calculateAnalysis = async () => {
     // Simulating API call with sample data
-    const sampleAnalysis = {
-      prediction: 1644.69,
-      statistics: {
-        percentileRank: 30.28,
-        comparisonToMean: -27.52,
-        standardDeviationsFromMean: -0.61,
-        emissionCategory: "Low",
-        populationStats: {
-          mean: 2269.15,
-          std_dev: 1017.62,
-          sample_size: 10000
-        }
-      },
-      comparisons: {
-        grocery: {
-          your_value: 450,
-          population_mean: 173.88,
-          difference_from_mean: 276.12,
-          percentile_rank: 100,
-          standard_deviations: 3.82
-        },
-        vehicleDistance: {
-          your_value: 800,
-          population_mean: 2031.49,
-          difference_from_mean: -1231.49,
-          percentile_rank: 49.62,
-          standard_deviations: -0.44
-        },
-        wasteBags: {
-          your_value: 3,
-          population_mean: 4.02,
-          difference_from_mean: -1.02,
-          percentile_rank: 27.87,
-          standard_deviations: -0.51
-        },
-        screenTime: {
-          your_value: 4,
-          population_mean: 12.14,
-          difference_from_mean: -8.14,
-          percentile_rank: 15.03,
-          standard_deviations: -1.15
-        },
-        clothingPurchases: {
-          your_value: 3,
-          population_mean: 25.11,
-          difference_from_mean: -22.11,
-          percentile_rank: 6,
-          standard_deviations: -1.50
-        }
-      }
-    };
-    setAnalysisData(sampleAnalysis);
+    const sampleAnalysis = JSON.parse(localStorage.getItem('user'));
+    try {
+      const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
+        ...sampleAnalysis
+      })
+      console.log(response2.data);
+      setAnalysisData(response2.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
+  // const sampleAnalysis = {
+  //   prediction: 1644.69,
+  //   statistics: {
+  //     percentileRank: 30.28,
+  //     comparisonToMean: -27.52,
+  //     standardDeviationsFromMean: -0.61,
+  //     emissionCategory: "Low",
+  //     populationStats: {
+  //       mean: 2269.15,
+  //       std_dev: 1017.62,
+  //       sample_size: 10000
+  //     }
+  //   },
+  //   comparisons: {
+  //     grocery: {
+  //       your_value: 450,
+  //       population_mean: 173.88,
+  //       difference_from_mean: 276.12,
+  //       percentile_rank: 100,
+  //       standard_deviations: 3.82
+  //     },
+  //     vehicleDistance: {
+  //       your_value: 800,
+  //       population_mean: 2031.49,
+  //       difference_from_mean: -1231.49,
+  //       percentile_rank: 49.62,
+  //       standard_deviations: -0.44
+  //     },
+  //     wasteBags: {
+  //       your_value: 3,
+  //       population_mean: 4.02,
+  //       difference_from_mean: -1.02,
+  //       percentile_rank: 27.87,
+  //       standard_deviations: -0.51
+  //     },
+  //     screenTime: {
+  //       your_value: 4,
+  //       population_mean: 12.14,
+  //       difference_from_mean: -8.14,
+  //       percentile_rank: 15.03,
+  //       standard_deviations: -1.15
+  //     },
+  //     clothingPurchases: {
+  //       your_value: 3,
+  //       population_mean: 25.11,
+  //       difference_from_mean: -22.11,
+  //       percentile_rank: 6,
+  //       standard_deviations: -1.50
+  //     }
+  //   }
+  // };
+  // setAnalysisData(sampleAnalysis);
 
   const getZScoreDescription = (stdDev) => {
     const abs = Math.abs(stdDev);
@@ -107,7 +118,7 @@ const Analytics = () => {
     const zScore = (value - mean) / stdDev;
     // Using our custom erf function for the percentile calculation
     const percentile = (1 - 0.5 * (1 + erf(-zScore / Math.sqrt(2)))) * 100;
-    
+
     return (
       <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -142,16 +153,18 @@ const Analytics = () => {
     const zScore = (value - mean) / stdDev;
     const range = 4;
     const steps = 100;
-    
+
     for (let i = -range; i <= range; i += (range * 2) / steps) {
       const x = i;
-      const y = (1 / (stdDev * Math.sqrt(2 * Math.PI))) * 
-                Math.exp(-(Math.pow(i, 2)) / (2));
+      const y = (1 / (stdDev * Math.sqrt(2 * Math.PI))) *
+        Math.exp(-(Math.pow(i, 2)) / (2));
       points.push({ x: mean + (i * stdDev), y, isYou: false });
     }
-    
-    points.push({ x: value, y: (1 / (stdDev * Math.sqrt(2 * Math.PI))) * 
-                Math.exp(-(Math.pow(zScore, 2)) / (2)), isYou: true });
+
+    points.push({
+      x: value, y: (1 / (stdDev * Math.sqrt(2 * Math.PI))) *
+        Math.exp(-(Math.pow(zScore, 2)) / (2)), isYou: true
+    });
 
     return (
       <Card className="w-full">
@@ -164,16 +177,16 @@ const Analytics = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={points}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
+                <XAxis
                   dataKey="x"
                   tickFormatter={(value) => value.toFixed(0)}
                 />
                 <YAxis hide />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => [value.toFixed(2), name]}
                   labelFormatter={(value) => `Value: ${parseFloat(value).toFixed(0)}`}
                 />
-                <Area 
+                <Area
                   type="monotone"
                   dataKey="y"
                   stroke="#3b82f6"
@@ -206,7 +219,7 @@ const Analytics = () => {
           <h1 className="text-3xl font-bold">Carbon Footprint Analytics</h1>
           <p className="text-gray-500">Detailed analysis of your environmental impact</p>
         </div>
-        <Button 
+        <Button
           onClick={calculateAnalysis}
           className="bg-blue-500 hover:bg-blue-600"
         >
@@ -218,21 +231,21 @@ const Analytics = () => {
         <>
           <Alert className={`${getZScoreColor(analysisData.statistics.standardDeviationsFromMean, true)} border-l-4`}>
             <AlertTitle className="flex items-center gap-2">
-              {analysisData.statistics.standardDeviationsFromMean < 0 ? 
-                <CheckCircle className="h-4 w-4" /> : 
+              {analysisData.statistics.standardDeviationsFromMean < 0 ?
+                <CheckCircle className="h-4 w-4" /> :
                 <AlertTriangle className="h-4 w-4" />
               }
               Overall Carbon Impact Assessment
             </AlertTitle>
             <AlertDescription className="mt-2">
-              Your carbon footprint is {Math.abs(analysisData.statistics.standardDeviationsFromMean).toFixed(2)} standard deviations 
-              {analysisData.statistics.standardDeviationsFromMean < 0 ? " below " : " above "} 
+              Your carbon footprint is {Math.abs(analysisData.statistics.standardDeviationsFromMean).toFixed(2)} standard deviations
+              {analysisData.statistics.standardDeviationsFromMean < 0 ? " below " : " above "}
               the population mean of {analysisData.statistics.populationStats.mean.toFixed(2)} CO₂e/year
             </AlertDescription>
           </Alert>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <BellCurvePosition 
+            <BellCurvePosition
               mean={analysisData.statistics.populationStats.mean}
               stdDev={analysisData.statistics.populationStats.std_dev}
               value={analysisData.prediction}
@@ -377,17 +390,17 @@ const Analytics = () => {
                     >
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
-                      <YAxis 
+                      <YAxis
                         domain={['dataMin - 100', 'dataMax + 100']}
                         tickFormatter={(value) => `${value.toFixed(0)} CO₂e`}
                       />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value) => [`${value.toFixed(2)} CO₂e`, "Carbon Impact"]}
                       />
                       <Legend />
-                      <Line 
-                        type="monotone" 
-                        dataKey="impact" 
+                      <Line
+                        type="monotone"
+                        dataKey="impact"
                         name="Carbon Impact"
                         stroke="#3b82f6"
                         strokeWidth={2}
