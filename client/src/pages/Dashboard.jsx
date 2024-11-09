@@ -1,160 +1,352 @@
-import React from "react";
-import { MdAddTask, MdAttachMoney, MdBarChart, MdFileCopy } from "react-icons/md";
-import { BadgePercentIcon } from "lucide-react";
-import { Pie, Line, Bar } from "react-chartjs-2";
-import { useOutletContext } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Filler,
-  BarElement,
-  Title,
-} from "chart.js";
+  BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer,
+  AreaChart, Area, Tooltip, XAxis, YAxis, Legend
+} from "recharts";
+import {
+  LeafIcon, TreesIcon, LightbulbIcon, GlobeIcon,
+  TrendingUpIcon, AwardIcon, UsersIcon, BatteryChargingIcon,
+  CarIcon, HomeIcon, UtensilsIcon
+} from "lucide-react";
 
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Filler,
-  BarElement,
-  Title
-);
-
-const DashboardCard = ({ title, value, icon }) => (
-  <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md flex items-center">
-    <div className="mr-4 text-green-500 dark:text-green-400">{icon}</div>
-    <div>
-      <div className="text-gray-600 dark:text-gray-300 text-sm">{title}</div>
-      <div className="text-2xl font-bold">{value}</div>
-    </div>
-  </div>
-);
-
-const projects = [
-  { name: "Deep Patel", progress: 80 },
-  { name: "Rajesh Mishra", progress: 60 },
-  { name: "Shri Hari", progress: 40 },
-  { name: "Ashley Frenandes", progress: 90 },
-];
-
-const PieChart = () => {
-  const data = {
-    labels: ["Emission Saved", "Electricity Usage", "Car Usage"],
-    datasets: [
-      {
-        data: [12, 19, 7],
-        backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(153, 102, 255, 0.6)"],
-      },
-    ],
-  };
-  return <Pie data={data} />;
-};
-
-const LineChart = () => {
-  const data = {
-    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    datasets: [
-      {
-        label: "My Water Saved (Liters)",
-        data: [5, 9, 7, 8, 6],
-        borderColor: "rgba(34, 193, 195, 1)",
-        fill: true,
-        backgroundColor: "rgba(34, 193, 195, 0.5)",
-      },
-      {
-        label: "Friend's Water Saved (Liters)",
-        data: [3, 6, 5, 7, 4],
-        borderColor: "rgba(255, 99, 132, 1)",
-        fill: true,
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-    ],
-  };
-  return <Line data={data} />;
-};
-
-const BarChart = () => {
-  const data = {
-    labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    datasets: [
-      { label: "Emission Generated", data: [5, 12, 19, 3, 5, 2, 8], backgroundColor: "rgba(75, 192, 192, 0.6)" },
-      { label: "Emission Saved", data: [3, 7, 11, 5, 8, 3, 4], backgroundColor: "rgba(54, 162, 235, 0.6)" },
-    ],
-  };
-  return <Bar data={data} />;
-};
-
-const Dashboard = () => {
-  localStorage.setItem("theme", "dark");
-  const { username } = useOutletContext();
+// Enhanced dashboard card with hover effects and click interaction
+const DashboardCard = ({ title, value, subtitle, icon: Icon, trend }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50 dark:bg-[rgb(0_6_12)] dark:text-white">
-      <h2 className="pt-4 text-3xl font-bold mb-6">Morning, {username}!</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <DashboardCard title="Carbon Emission Saved" value="2 KG" icon={<MdBarChart className="text-3xl" />} />
-        <DashboardCard title="Beats" value="81% of our users" icon={<BadgePercentIcon className="text-3xl" />} />
-        <DashboardCard title="Water Saved" value="50 Liters" icon={<MdFileCopy className="text-3xl" />} />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Daily World Emissions</h3>
-          <div className="text-red-300 text-center">400 Metric Tons</div>
-        </div>
-
-        <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Friends</h3>
-          <div className="space-y-4">
-            {projects.map((project, index) => (
-              <div key={index} className="flex items-center">
-                <img
-                  className="w-10 h-10 rounded-full mr-4"
-                  src={`https://randomuser.me/api/portraits/thumb/men/${index + 10}.jpg`}
-                  alt="User"
-                />
-                <div className="w-full">
-                  <div className="flex justify-between mb-2">
-                    <p className="font-semibold">{project.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{`${project.progress}%`}</p>
-                  </div>
-                  <div className="bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                    <div className="bg-green-600 h-2 rounded-full" style={{ width: `${project.progress}%` }} />
-                  </div>
-                </div>
-              </div>
-            ))}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+    >
+      <Card className="border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+        <CardContent className="p-6">
+          <motion.div className="flex items-center justify-between">
+            <motion.div
+              animate={{ rotate: isHovered ? 360 : 0 }}
+              transition={{ duration: 0.5 }}
+              className="p-3 rounded-full bg-green-100"
+            >
+              <Icon className="h-8 w-8 text-green-500" />
+            </motion.div>
+            {trend && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className={`flex items-center ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}
+              >
+                <TrendingUpIcon className={`h-4 w-4 mr-1 ${trend < 0 ? 'rotate-180' : ''}`} />
+                <span>{Math.abs(trend)}%</span>
+              </motion.div>
+            )}
+          </motion.div>
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">{title}</p>
+            <motion.p
+              className="text-3xl font-bold text-gray-800 mt-1"
+              animate={{ scale: isHovered ? 1.1 : 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              {value}
+            </motion.p>
+            {subtitle && (
+              <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            )}
           </div>
-        </div>
-
-        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Emission Breakdown</h3>
-          <PieChart />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Daily Water Saving</h3>
-          <LineChart />
-        </div>
-        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-4">Carbon Emission Overview</h3>
-          <BarChart />
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
-export default Dashboard;
+// Enhanced emission data with more detail
+const emissionData = [
+  { name: "Your Usage", value: 30, color: "#10B981" },
+  { name: "World Average", value: 70, color: "#6EE7B7" }
+];
+
+// Weekly data with multiple metrics
+const weeklyData = [
+  { name: "Mon", electricity: 20, water: 15, transport: 25 },
+  { name: "Tue", electricity: 25, water: 18, transport: 22 },
+  { name: "Wed", electricity: 30, water: 20, transport: 28 },
+  { name: "Thu", electricity: 28, water: 22, transport: 24 },
+  { name: "Fri", electricity: 35, water: 25, transport: 30 },
+  { name: "Sat", electricity: 40, water: 30, transport: 35 },
+  { name: "Sun", electricity: 32, water: 24, transport: 27 }
+];
+
+// Enhanced friends data with achievements
+const friends = [
+  { name: "Deep Patel", progress: 80, achievement: "Carbon Champion", avatar: "1" },
+  { name: "Rajesh Mishra", progress: 60, achievement: "Energy Saver", avatar: "2" },
+  { name: "Shri Hari", progress: 40, achievement: "Green Commuter", avatar: "3" },
+  { name: "Ashley Fernandes", progress: 90, achievement: "Eco Warrior", avatar: "4" }
+];
+
+// Carbon source breakdown
+const carbonSources = [
+  { name: "Transport", value: 40, icon: CarIcon },
+  { name: "Home", value: 35, icon: HomeIcon },
+  { name: "Food", value: 25, icon: UtensilsIcon }
+];
+
+export default function Dashboard() {
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState('electricity');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimationComplete(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-7xl mx-auto"
+      >
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-4xl font-bold text-gray-800"
+            >
+              Morning, eco warrior! 🌱
+            </motion.h1>
+            <p className="text-gray-600 mt-2">Your environmental impact dashboard</p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center space-x-2"
+          >
+            <AwardIcon className="h-6 w-6 text-yellow-500" />
+            <span className="text-lg font-semibold text-gray-700">Rank: #42 Global</span>
+          </motion.div>
+        </div>
+
+        <AnimatePresence>
+          {animationComplete && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-6"
+            >
+              <Alert className="bg-green-50 border-green-200">
+                <TreesIcon className="h-4 w-4" />
+                <AlertTitle>Great progress!</AlertTitle>
+                <AlertDescription>
+                  You've reduced your carbon footprint by 15% this month. Keep it up!
+                </AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <DashboardCard
+            title="Carbon Saved"
+            value="2.8 KG"
+            subtitle="vs. last week"
+            icon={LeafIcon}
+            trend={12}
+          />
+          <DashboardCard
+            title="Energy Saved"
+            value="42 kWh"
+            subtitle="daily average"
+            icon={LightbulbIcon}
+            trend={8}
+          />
+          <DashboardCard
+            title="Water Saved"
+            value="120 L"
+            subtitle="this week"
+            icon={BatteryChargingIcon}
+            trend={-5}
+          />
+          <DashboardCard
+            title="Community Rank"
+            value="#42"
+            subtitle="out of 1,234"
+            icon={UsersIcon}
+            trend={15}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="border-gray-200 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-gray-800">Carbon Sources Breakdown</CardTitle>
+                <CardDescription>Your main sources of carbon emissions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {carbonSources.map((source, index) => {
+                    const Icon = source.icon;
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <div className="flex items-center mb-2">
+                          <Icon className="h-5 w-5 text-green-500 mr-2" />
+                          <span className="text-sm font-medium text-gray-700">{source.name}</span>
+                          <span className="ml-auto text-sm text-gray-600">{source.value}%</span>
+                        </div>
+                        <Progress value={source.value} className="h-2" />
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="border-gray-200 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-gray-800">Your Impact vs World Average</CardTitle>
+                <CardDescription>How you compare to global emissions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={140}>
+                  <PieChart>
+                    <Pie
+                      data={emissionData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {emissionData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <Card className="border-gray-200 shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-gray-800">Weekly Usage Trends</CardTitle>
+                  <CardDescription>Track your resource consumption</CardDescription>
+                </div>
+                <div className="flex space-x-2">
+                  {['electricity', 'water', 'transport'].map((metric) => (
+                    <motion.button
+                      key={metric}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-3 py-1 rounded-full text-sm ${selectedMetric === metric
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-100 text-gray-600'
+                        }`}
+                      onClick={() => setSelectedMetric(metric)}
+                    >
+                      {metric.charAt(0).toUpperCase() + metric.slice(1)}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={weeklyData}>
+                      <defs>
+                        <linearGradient id="colorUsage" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Area
+                        type="monotone"
+                        dataKey={selectedMetric}
+                        stroke="#10B981"
+                        fillOpacity={1}
+                        fill="url(#colorUsage)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-4">
+                  {friends.map((friend, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center"
+                    >
+                      <Avatar className="h-10 w-10 mr-4">
+                        <AvatarImage src={`https://randomuser.me/api/portraits/thumb/men/${friend.avatar}.jpg`} />
+                        <AvatarFallback>{friend.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex justify-between mb-1">
+                          <div>
+                            <span className="text-sm font-medium text-gray-700">{friend.name}</span>
+                            <div className="text-xs text-gray-500">{friend.achievement}</div>
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">{friend.progress}%</span>
+                        </div>
+                        <Progress value={friend.progress} className="h-2" />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
