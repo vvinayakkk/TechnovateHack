@@ -94,6 +94,7 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "tailwindcss-motion": "^0.4.1-beta",
     "terser": "^5.36.0",
     "vite": "^5.4.9",
     "vite-plugin-pwa": "^0.20.5",

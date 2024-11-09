@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
+import UserDataInput from './pages/UserDataInput';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp signInForceRedirectUrl='/dashboard' />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/moredetails" element={<UserDataInput />} />
 
         {/* Routes with Layout */}
         <Route element={<MainLayout />}>
@@ -57,6 +59,7 @@ const App = () => {
             <Route path="/events" element={<Events />} />
             <Route path="/donate" element={<Donations />} />
             <Route path="/analytics" element={<Analytics />} />
+
           </Route>
         </Route>
       </Routes>

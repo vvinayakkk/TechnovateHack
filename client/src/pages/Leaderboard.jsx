@@ -250,58 +250,82 @@ const Leaderboard = () => {
 
 
       {/* Leaderboard Table Section */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-950 border border-gray-300">
-          <thead>
-            <tr className="bg-green-100 dark:bg-green-950">
-              <th className="py-2 px-4 border">Rank</th>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">CO2 Reduction</th>
-              <th className="py-2 px-4 border">Practices</th>
-              <th className="py-2 px-4 border">Impact Score</th>
+<div className="overflow-x-auto">
+    <table className="min-w-full bg-white dark:bg-gray-950 border border-gray-300 rounded-lg shadow-md">
+        <thead className="sticky top-0 z-10 bg-green-100 dark:bg-green-950">
+            <tr>
+                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Rank</th>
+                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Name</th>
+                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">CO2 Reduction</th>
+                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Practices</th>
+                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Impact Score</th>
             </tr>
-          </thead>
-          <tbody>
-            {leaderboardData.map((player) => (
-              <tr
-                key={player.place}
-                className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                onClick={() => setSelectedPlayer(player)} // Set the selected player
-              >
-                <td className="py-2 px-4 border text-center">{player.place}</td>
-                <td className="py-2 px-4 border">{player.name}</td>
-                <td className="py-2 px-4 border text-center">{player.co2Reduction}</td>
-                <td className="py-2 px-4 border text-center">{player.practices}</td>
-                <td className="py-2 px-4 border text-center">{player.impactScore}</td>
-              </tr>
+        </thead>
+        <tbody>
+            {leaderboardData.map((player, index) => (
+                <tr
+                    key={player.place}
+                    className={`${
+                        index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900'
+                    } hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
+                    onClick={() => setSelectedPlayer(player)}
+                >
+                    <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td>
+                    <td className="py-3 px-5 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
+                    <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.co2Reduction}</td>
+                    <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.practices}</td>
+                    <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.impactScore}</td>
+                </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+    </table>
+</div>
+
 
       {/* Player Profile Dialog */}
       {selectedPlayer && (
-        <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
-          <DialogContent className="sm:max-w-md">
+    <Dialog open={!!selectedPlayer} onOpenChange={(open) => !open && setSelectedPlayer(null)}>
+        <DialogContent className="sm:max-w-md p-6 rounded-lg shadow-xl bg-white dark:bg-gray-900 animate-fadeIn">
             <DialogHeader>
-              <DialogTitle>{selectedPlayer.name}'s Profile</DialogTitle>
-              <DialogDescription>
-                View the profile details of {selectedPlayer.name}.
-              </DialogDescription>
+                <DialogTitle className="text-xl font-bold text-gray-800 dark:text-white">{selectedPlayer.name}'s Profile</DialogTitle>
+                <DialogDescription className="text-sm text-gray-500 dark:text-gray-400">
+                    Detailed profile of {selectedPlayer.name}.
+                </DialogDescription>
             </DialogHeader>
-            <p><strong>CO2 Reduction:</strong> {selectedPlayer.co2Reduction}</p>
-            <p><strong>Practices:</strong> {selectedPlayer.practices}</p>
-            <p><strong>Impact Score:</strong> {selectedPlayer.impactScore}</p>
-            <DialogFooter className="sm:justify-start">
-              <DialogClose asChild>
-                <button type="button" className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
-                  Close
-                </button>
-              </DialogClose>
+            
+            {/* Profile Image */}
+            <div className="flex flex-col items-center space-y-4 mt-4">
+                <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <img src="/path-to-placeholder-image.jpg" alt={`${selectedPlayer.name} profile`} className="object-cover w-full h-full"/>
+                </div>
+                
+                <div className="text-center">
+                    <p className="text-gray-700 dark:text-gray-300">
+                        <strong>CO2 Reduction:</strong> {selectedPlayer.co2Reduction}
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        <strong>Practices:</strong> {selectedPlayer.practices}
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                        <strong>Impact Score:</strong> {selectedPlayer.impactScore}
+                    </p>
+                </div>
+            </div>
+
+            {/* Footer with Close Button */}
+            <DialogFooter className="mt-6 sm:justify-center">
+                <DialogClose asChild>
+                    <button
+                        type="button"
+                        className="px-6 py-2 font-semibold text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-all"
+                    >
+                        Close
+                    </button>
+                </DialogClose>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+        </DialogContent>
+    </Dialog>
+)}
     </div>
   );
 };
