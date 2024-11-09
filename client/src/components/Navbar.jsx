@@ -32,7 +32,7 @@ const Navbar = () => {
 
                 <div className="flex flex-col items-center space-y-2 w-[100%] mb-20">
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
-                        <Link to="/" className="flex justify-start items-center">
+                        <Link to="/dashboard" className="flex justify-start items-center">
                             <Home className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Dashboard</p>
                         </Link>
@@ -100,7 +100,7 @@ const Navbar = () => {
 
                 {isMobileMenuOpen && (
                     <div className="flex flex-col items-center space-y-4 pb-4">
-                        <Link to="/" className="text-black dark:text-white hover:font-semibold">Dashboard</Link>
+                        <Link to="/dashboard" className="text-black dark:text-white hover:font-semibold">Dashboard</Link>
                         <Link to="/events" className="text-black dark:text-white hover:font-semibold">Events</Link>
                         <Link to="/leaderboard" className="text-black dark:text-white hover:font-semibold">Leaderboard</Link>
                         <Link to="/calendar" className="text-black dark:text-white hover:font-semibold">Calendar</Link>

@@ -10,6 +10,7 @@ import Events from './pages/Events';
 import Donations from './pages/Donations';
 import Analytics from './pages/Analytics';
 import { Loader2 } from 'lucide-react';
+import Dashboard from './pages/Dashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -43,12 +44,14 @@ const App = () => {
       <Routes>
       {/* Routes without Layout */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<SignUp signInUrl='/events'/>} />
-      <Route path="/signin" element={<SignIn />} />
+      <Route path="/signup" element={<SignUp signInForceRedirectUrl='/events'/>} />
+      <Route path="/signin" element={<SignIn signUpForceRedirectUrl='/events' />} />
+
 
       {/* Routes with Layout */}
       <Route element={<MainLayout />}>
         <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/events" element={<Events />} />
           <Route path="/donations" element={<Donations />} />
