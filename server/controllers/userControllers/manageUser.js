@@ -47,7 +47,7 @@ const createUser = async (req, res) => {
       howLongInternetDailyHour,
       energyEfficiency,
       recycling,
-      cookingWith
+      cookingWith,
     });
 
     
@@ -89,4 +89,28 @@ const getUser = async (req, res) => {
   }
 };
 
-export { createUser, getUser };
+const leadearboard = async (req, res) => {
+  try {
+
+    const users = await User.find({ carbonEmission: { $ne: null } });
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        message: 'No users with carbon emissions found'
+      });
+    }
+
+    res.status(200).json({
+      message: 'Users with carbon emissions found',
+      users
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Error retrieving users',
+      error: error.message
+    });
+  }
+};
+
+export { createUser, getUser , leadearboard};

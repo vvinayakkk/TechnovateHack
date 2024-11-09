@@ -1,7 +1,8 @@
 
-import {createUser,getUser} from "./userControllers/manageUser.js"
+import {createUser,getUser ,leadearboard} from "./userControllers/manageUser.js"
 
 export{
     createUser,
-    getUser
+    getUser,
+    leadearboard
 }
