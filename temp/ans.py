@@ -216,7 +216,7 @@ def analyze_carbon_footprint(user_data):
     try:
         # Load model and data
         model = load_model('carbon_footprint_model.pkl')
-        df = pd.read_csv(r"C:\Users\Asim\Downloads\Carbon Emission.csv\Carbon Emission.csv")
+        df = pd.read_csv(r"C:/Users/vinay/Desktop/technovate/Technovate/Carbon Emission.csv")
         
         # Prepare user data
         user_df = pd.DataFrame([user_data])
@@ -225,8 +225,8 @@ def analyze_carbon_footprint(user_data):
         df_processed = preprocess_data(df)
         user_df_processed = preprocess_data(user_df)
         
-        # Get prediction
-        features = [col for col in df_processed.columns if col != 'CarbonEmission']
+        # Get prediction 
+        features = [col for  col in df_processed.columns if col != 'CarbonEmission']
         user_prediction = model.predict(user_df_processed[features])[0]
         
         # Generate and print insights

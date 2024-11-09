@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 import joblib
 
 # Load data
-df = pd.read_csv(r'C:\Users\Asim\Downloads\Carbon Emission.csv\Carbon Emission.csv')
+df = pd.read_csv(r'C:/Users/vinay/Desktop/technovate/Technovate/Carbon Emission.csv')
 
 # Preprocess data
 def preprocess_data(df):
