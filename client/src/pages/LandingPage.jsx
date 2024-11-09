@@ -96,7 +96,7 @@ export default function CoolLandingPage() {
             <p className="text-xl md:text-2xl mb-8">Experience innovation like never before</p>
             <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
               if (isSignedIn) {
-                navigate('/leaderboard');
+                navigate('/dashboard');
               } else {
                 navigate('/signin');
               }

@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-        navigate('/signup');
+      navigate('/signup');
     }
   }, [isLoaded, isSignedIn, navigate]);
 
@@ -45,7 +45,7 @@ const App = () => {
       <Routes>
         {/* Routes without Layout */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUp signInUrl='/events' />} />
+        <Route path="/signup" element={<SignUp signInForceRedirectUrl='/dashboard' />} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* Routes with Layout */}
