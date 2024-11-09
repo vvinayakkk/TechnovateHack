@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf } from 'lucide-react';
+import { Home, Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf, CalendarSearch, LayoutDashboard, Medal, Car, MessageSquareDot } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import User from './User';
 
@@ -28,35 +28,35 @@ const Navbar = () => {
                 <div className="flex flex-col items-center space-y-2 w-[100%] mb-20">
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
                         <Link to="/dashboard" className="flex justify-start items-center">
-                            <Home className="h-4 w-4 mr-2" />
+                            <LayoutDashboard className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Dashboard</p>
                         </Link>
                     </div>
 
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
                         <Link to="/events" className="flex justify-start items-center">
-                            <NotebookIcon className="h-4 w-4 mr-2" />
+                            <CalendarSearch className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Events</p>
                         </Link>
                     </div>
 
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
                         <Link to="/leaderboard" className="flex justify-start items-center">
-                            <Folder className="h-4 w-4 mr-2" />
+                            <Medal className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Leaderboard</p>
                         </Link>
                     </div>
 
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
                         <Link to="/map" className="flex justify-start items-center">
-                            <BarChart className="h-4 w-4 mr-2" />
+                            <Car className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Car Pooling</p>
                         </Link>
                     </div>
 
                     <div className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-100 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">
                         <Link to="/community" className="flex justify-start items-center">
-                            <BarChart className="h-4 w-4 mr-2" />
+                            <MessageSquareDot className="h-4 w-4 mr-2" />
                             <p className="text-sm font-pop">Community</p>
                         </Link>
                     </div>
