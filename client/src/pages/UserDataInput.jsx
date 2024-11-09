@@ -1,5 +1,6 @@
 import { useUser } from '@clerk/clerk-react';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const UserDataInput = () => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -21,24 +22,64 @@ const UserDataInput = () => {
     wasteBagSize: '',
     wasteBagWeeklyCount: '',
     energyEfficiency: false,
-    recycling: '',
-    cookingDevices: '',
+    recycling: [], // Use an array for multiple selections
+    cookingDevices: [], // Use an array for multiple selections
   });
 
+  // Handle input changes for all types of fields
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
+
+    if (type === 'checkbox') {
+      if (name === 'energyEfficiency') {
+        setFormData({
+          ...formData,
+          [name]: checked,
+        });
+      } else {
+        // Handle checkbox arrays (multi-select options)
+        setFormData((prevData) => {
+          const newSelections = checked
+            ? [...prevData[name], value]
+            : prevData[name].filter((item) => item !== value);
+
+          return { ...prevData, [name]: newSelections };
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  // Handle form submission to the backend
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Form data you want to send
+    const dataToSubmit = {
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+      userId: user.id, // Optionally add the user ID if needed
+    };
+
+    try {
+      const response = await axios.post('/api/submit-form', dataToSubmit);
+      console.log('Form submitted successfully:', response.data);
+      // Optionally handle the success response, e.g., show a success message
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Optionally handle the error response, e.g., show an error message
+    }
   };
 
   return (
     <div className="max-w-2xl mt-10 mx-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100 shadow-2xl rounded-xl dark:from-gray-900 dark:to-gray-800 transition-all">
       <h2 className="text-3xl font-bold text-center mb-8 text-green-700 dark:text-green-400">Carbon Footprint Details</h2>
-                                                                 
-      <form className="space-y-6">
-        {/* Form Fields */}
+
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Dropdown Select Fields */}
         {[
           {
             id: 'heatingEnergySource',
@@ -48,17 +89,17 @@ const UserDataInput = () => {
           {
             id: 'transport',
             label: 'Preferred Transport',
-            options: ['Select an option', 'Car', 'Public Transport', 'Bike', 'Walking'],
+            options: ['Select an option', 'Walking/Bicycle', 'Private', 'Walking'],
           },
           {
             id: 'vehicleType',
             label: 'Vehicle Type (Fuel)',
-            options: ['Select an option', 'Petrol', 'Diesel', 'Electric', 'Hybrid'],
+            options: ['Select an option', 'Petrol', 'Diesel', 'Electric', 'LPG', 'Hybrid'],
           },
           {
             id: 'wasteBagSize',
             label: 'Waste Bag Size',
-            options: ['Select an option', 'Small', 'Medium', 'Large'],
+            options: ['Select an option', 'Small', 'Medium', 'Large', 'Extra Large'],
           },
         ].map((field) => (
           <div key={field.id} className="flex flex-col">
@@ -73,13 +114,15 @@ const UserDataInput = () => {
               className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
             >
               {field.options.map((option, index) => (
-                <option key={index} value={option.toLowerCase()}>{option}</option>
+                <option key={index} value={option.toLowerCase()}>
+                  {option}
+                </option>
               ))}
             </select>
           </div>
         ))}
 
-        {/* Input fields */}
+        {/* Input Fields */}
         {[
           {
             id: 'monthlyGroceryBill',
@@ -116,7 +159,48 @@ const UserDataInput = () => {
           </div>
         ))}
 
-        {/* Checkbox and Textareas */}
+        {/* Checkbox and Multiple Select Options */}
+        {[
+          {
+            id: 'recycling',
+            label: 'What types of waste do you recycle?',
+            options: ['Paper', 'Plastic', 'Glass', 'Metal'],
+          },
+          {
+            id: 'cookingDevices',
+            label: 'What devices do you use for cooking?',
+            options: ['Stove', 'Oven', 'Microwave', 'Grill', 'Airfryer'],
+          },
+        ].map((checkboxGroup) => (
+          <div key={checkboxGroup.id} className="flex flex-col mb-6">
+            <label htmlFor={checkboxGroup.id} className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {checkboxGroup.label}
+            </label>
+            <div className="flex flex-col space-y-2">
+              {checkboxGroup.options.map((option, index) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`${checkboxGroup.id}-${option}`}
+                    name={checkboxGroup.id}
+                    value={option}
+                    checked={formData[checkboxGroup.id]?.includes(option)} // Check if the option is selected
+                    onChange={handleChange}
+                    className="form-checkbox h-4 w-4 text-green-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0 focus:ring-green-500"
+                  />
+                  <label
+                    htmlFor={`${checkboxGroup.id}-${option}`}
+                    className="ml-2 text-gray-700 dark:text-gray-300"
+                  >
+                    {option}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Energy Efficiency Checkbox */}
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -130,25 +214,6 @@ const UserDataInput = () => {
             Do you prefer energy-efficient devices?
           </label>
         </div>
-
-        {[
-          { id: 'recycling', label: 'What types of waste do you recycle?', placeholder: 'e.g. Paper, Plastic, Glass' },
-          { id: 'cookingDevices', label: 'What devices do you use for cooking?', placeholder: 'e.g. Stove, Microwave' },
-        ].map((textarea) => (
-          <div key={textarea.id} className="flex flex-col">
-            <label htmlFor={textarea.id} className="text-lg font-medium text-gray-700 dark:text-gray-300">
-              {textarea.label}
-            </label>
-            <textarea
-              id={textarea.id}
-              name={textarea.id}
-              value={formData[textarea.id]}
-              onChange={handleChange}
-              placeholder={textarea.placeholder}
-              className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
-            />
-          </div>
-        ))}
 
         {/* Submit Button */}
         <button

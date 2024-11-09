@@ -271,7 +271,7 @@ export default function CarbonTrackerLanding() {
                   if (isSignedIn) {
                     navigate('/dashboard');
                   } else {
-                    navigate('/signin');
+                    navigate('/signup');
                   }
                 }}
               >
