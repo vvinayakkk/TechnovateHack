@@ -7,57 +7,32 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from 'sonner';
 
 export default function EventPage() {
-  const [events, setEvents] = useState([]);  // Initialize as an empty array
+  const [events, setEvents] = useState([]); 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-  const registeredEvents = [
-    {
-      _id: "1",
-      title: "Film Festival",
-      eventDescription: "Showcasing independent films from around the world",
-      location: "Los Angeles, CA",
-      eventDate: "2024-06-01",
-      registrationFee: "$100.00",
-      maxAttendees: 500,
-      eventFormat: "Offline",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyvetnLOz5AF4JPJGxqw0EJpwpBHl9swwqww&s"
-    },
-    {
-      _id: "2",
-      title: "Comic Con",
-      eventDescription: "Annual gathering for comic and pop culture fans",
-      location: "San Diego, CA",
-      eventDate: "2024-07-23",
-      registrationFee: "$150.00",
-      maxAttendees: 1000,
-      eventFormat: "Offline",
-      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyvetnLOz5AF4JPJGxqw0EJpwpBHl9swwqww&s"
-    },
-  ];
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
 
-  // Fetch events data from backend
   useEffect(() => {
     axios.get('http://localhost:3000/event/get-events')
       .then((response) => {
         const data = response.data;
-        setEvents(data.events); // Ensure events is an array
+        setEvents(data.events);
       })
       .catch((error) => {
         console.error("Error fetching events:", error);
-        setEvents([]); // Default to empty array on error
+        setEvents([]); 
       });
   }, []);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm); 
+    }, 500); 
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   const filteredEvents = events.filter(event =>
     event.title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
