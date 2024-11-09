@@ -105,6 +105,17 @@ const Analytics = () => {
     return stdDev < 0 ? "Significantly below average" : "Significantly above average";
   };
 
+  const getImpactBadgeStyles = (impactLevel) => {
+    switch (impactLevel) {
+      case 'High':
+        return 'bg-red-100 text-red-800';
+      case 'Medium':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-green-100 text-green-800';
+    }
+  };
+
   const getZScoreColor = (stdDev, inverted = false) => {
     const abs = Math.abs(stdDev);
     const isPositive = stdDev > 0;
@@ -415,130 +426,87 @@ const Analytics = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recommendations</CardTitle>
-                <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {analysisData.recommendations && analysisData.recommendations[0] && (
-                  <div className="space-y-6">
-                    {/* Immediate Actions */}
-                    {analysisData.recommendations[0].immediate_actions?.length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-semibold flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          Immediate Actions
-                        </h3>
-                        {analysisData.recommendations[0].immediate_actions.map((action, index) => (
-                          <Alert key={index}>
-                            <Info className="h-4 w-4" />
-                            <AlertTitle className="flex items-center gap-2">
-                              {action.action}
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                action.impact_level === 'High' ? 'bg-red-100 text-red-800' :
-                                action.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-green-100 text-green-800'
-                              }`}>
-                                {action.impact_level} Impact
-                              </span>
-                            </AlertTitle>
-                            <AlertDescription>
-                              {action.suggestion}
-                            </AlertDescription>
-                          </Alert>
-                        ))}
-                      </div>
-                    )}
+          <Card className="w-full max-w-4xl">
+      <CardHeader>
+        <CardTitle>Recommendations</CardTitle>
+        <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Immediate Actions */}
+          {analysisData.recommendations.immediateActions?.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Immediate Actions
+              </h3>
+              {analysisData.recommendations.immediateActions.map((action, index) => (
+                <Alert key={index} className="shadow-sm">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle className="flex items-center gap-2">
+                    {action.action}
+                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}>
+                      {action.impact_level} Impact
+                    </span>
+                  </AlertTitle>
+                  <AlertDescription>
+                    {action.suggestion}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          )}
 
-                    {/* Medium Term Goals */}
-                    {analysisData.recommendations[0].medium_term_goals?.length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-semibold flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          Medium Term Goals
-                        </h3>
-                        {analysisData.recommendations[0].medium_term_goals.map((goal, index) => (
-                          <Alert key={index}>
-                            <Info className="h-4 w-4" />
-                            <AlertTitle className="flex items-center gap-2">
-                              {goal.action}
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                goal.impact_level === 'High' ? 'bg-red-100 text-red-800' :
-                                goal.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-green-100 text-green-800'
-                              }`}>
-                                {goal.impact_level} Impact
-                              </span>
-                            </AlertTitle>
-                            <AlertDescription>
-                              {goal.suggestion}
-                            </AlertDescription>
-                          </Alert>
-                        ))}
-                      </div>
-                    )}
+          {/* Medium Term Goals */}
+          {analysisData.recommendations.mediumTermGoals?.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Medium Term Goals
+              </h3>
+              {analysisData.recommendations.mediumTermGoals.map((goal, index) => (
+                <Alert key={index} className="shadow-sm">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle className="flex items-center gap-2">
+                    {goal.action}
+                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}>
+                      {goal.impact_level} Impact
+                    </span>
+                  </AlertTitle>
+                  <AlertDescription>
+                    {goal.suggestion}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          )}
 
-                    {/* Long Term Changes */}
-                    {analysisData.recommendations[0].long_term_changes?.length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-semibold flex items-center gap-2">
-                          <TrendingUp className="h-4 w-4" />
-                          Long Term Changes
-                        </h3>
-                        {analysisData.recommendations[0].long_term_changes.map((change, index) => (
-                          <Alert key={index}>
-                            <Info className="h-4 w-4" />
-                            <AlertTitle className="flex items-center gap-2">
-                              {change.action}
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                change.impact_level === 'High' ? 'bg-red-100 text-red-800' :
-                                change.impact_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-green-100 text-green-800'
-                              }`}>
-                                {change.impact_level} Impact
-                              </span>
-                            </AlertTitle>
-                            <AlertDescription>
-                              {change.suggestion}
-                            </AlertDescription>
-                          </Alert>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Impact Breakdown</CardTitle>
-                <CardDescription>Distribution of your carbon footprint sources</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={Object.entries(analysisData.comparisons).map(([key, value]) => ({
-                        category: key,
-                        impact: value.your_value * value.standard_deviations,
-                        baseline: value.population_mean
-                      }))}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="category" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="impact" name="Your Impact" fill="#3b82f6" />
-                      <Bar dataKey="baseline" name="Baseline" fill="#94a3b8" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Long Term Changes */}
+          {analysisData.recommendations.longTermChanges?.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Long Term Changes
+              </h3>
+              {analysisData.recommendations.longTermChanges.map((change, index) => (
+                <Alert key={index} className="shadow-sm">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle className="flex items-center gap-2">
+                    {change.action}
+                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}>
+                      {change.impact_level} Impact
+                    </span>
+                  </AlertTitle>
+                  <AlertDescription>
+                    {change.suggestion}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
           </div>
         </>
       )}
