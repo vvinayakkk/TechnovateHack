@@ -232,10 +232,81 @@ def generate_insights_from_csv(user_data, prediction, csv_data):
         '3. RECOMMENDATIONS': generate_detailed_recommendations(user_data)
     }
 
+
+def store_analysis_results(db, analysis_data):
+    """Store all analysis results in MongoDB and append to existing user fields"""
+    try:
+        # Get the user's document
+        user_id = ObjectId(analysis_data['userId'])
+        user_doc = db.find_one({'_id': user_id})
+        
+        # Create or update fields for analyses, recommendations, comparisons, and insights
+        update_data = {
+            '$set': {
+                'lastUpdated': analysis_data['timestamp'],  # Update the last updated timestamp
+            },
+            '$push': {
+                'analyses': {
+                    'prediction': analysis_data['prediction'],
+                    'timestamp': analysis_data['timestamp'],
+                    'statistics': analysis_data['statistics'],
+                    'metadata': analysis_data['metadata']
+                },
+                'recommendations': {
+                    'timestamp': analysis_data['timestamp'],
+                    'immediate_actions': analysis_data['recommendations']['immediate_actions'],
+                    'medium_term_goals': analysis_data['recommendations']['medium_term_goals'],
+                    'long_term_changes': analysis_data['recommendations']['long_term_changes']
+                },
+                'comparisons': {
+                    'timestamp': analysis_data['timestamp'],
+                    'grocery': analysis_data['comparisons']['grocery'],
+                    'vehicleDistance': analysis_data['comparisons']['vehicleDistance'],
+                    'wasteBags': analysis_data['comparisons']['wasteBags'],
+                    'screenTime': analysis_data['comparisons']['screenTime'],
+                    'clothingPurchases': analysis_data['comparisons']['clothingPurchases']
+                },
+                'insights': {
+                    'timestamp': analysis_data['timestamp'],
+                    'overall_summary': analysis_data['insights']['1. OVERALL SUMMARY'],
+                    'comparative_stats': analysis_data['insights']['2. COMPARATIVE STATS FOR SPECIFIC FACTORS'],
+                    'recommendations': analysis_data['insights']['3. RECOMMENDATIONS']
+                }
+            }
+        }
+        
+        # Update the user document and append new data
+        db.update_one(
+            {'_id': user_id},
+            update_data,
+            upsert=True  # Create the document if it doesn't exist
+        )
+        
+        return True
+    except Exception as e:
+        print(f"Error storing analysis results: {str(e)}")
+        traceback.print_exc()
+        return False
+
+    
+from dotenv import load_dotenv
+from pymongo import MongoClient
+import os
+# Load environment variables
+load_dotenv()
+def get_db_connection():
+    """Establish connection to MongoDB"""
+    client = MongoClient(os.getenv('DATABASE_URL'))
+    db2 = client['Techonovate']
+    db= db2['users']
+    return db
 @api_view(['POST'])
 def analyze_carbon_footprint(request):
     """Main API endpoint for carbon footprint analysis"""
     try:
+        # Get database connection
+        db = get_db_connection()
+        
         # Load CSV data
         csv_data = load_csv_data()
         
@@ -297,7 +368,12 @@ def analyze_carbon_footprint(request):
             }
         }
         
-        # Convert all numpy types to Python native types
+        # Store results in MongoDB
+        storage_success = store_analysis_results(db, convert_to_python_types(response_data))
+        if not storage_success:
+            print("Warning: Failed to store analysis results in database")
+        
+        # Convert all numpy types to Python native types and return response
         return JsonResponse(convert_to_python_types(response_data))
         
     except Exception as e:
