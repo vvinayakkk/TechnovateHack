@@ -11,6 +11,30 @@ export default function EventPage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const registeredEvents = [
+    {
+      _id: "1",
+      title: "Film Festival",
+      eventDescription: "Showcasing independent films from around the world",
+      location: "Los Angeles, CA",
+      eventDate: "2024-06-01",
+      registrationFee: "$100.00",
+      maxAttendees: 500,
+      eventFormat: "Offline",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyvetnLOz5AF4JPJGxqw0EJpwpBHl9swwqww&s"
+    },
+    {
+      _id: "2",
+      title: "Comic Con",
+      eventDescription: "Annual gathering for comic and pop culture fans",
+      location: "San Diego, CA",
+      eventDate: "2024-07-23",
+      registrationFee: "$150.00",
+      maxAttendees: 1000,
+      eventFormat: "Offline",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyvetnLOz5AF4JPJGxqw0EJpwpBHl9swwqww&s"
+    },
+  ];
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
