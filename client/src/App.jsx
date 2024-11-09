@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react';
 import UserDataInput from './pages/UserDataInput';
 import CustomSignUp from './pages/CustomSignUp';
 import CustomSignIn from './pages/CustomSignIn';
-
+import Products from "./pages/Products";
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -63,7 +63,7 @@ const App = () => {
             <Route path="/map" element={<Map />} />
             <Route path="/donate" element={<Donations />} />
             <Route path="/analytics" element={<Analytics />} />
-
+            <Route path="/products" element={<Products />} />
           </Route>
         </Route>
       </Routes>
