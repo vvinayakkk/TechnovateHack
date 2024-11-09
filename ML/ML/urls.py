@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/',include('audioprocessing.urls')),
     path('api/',include('calculator.urls')),
     path('api/',include('webscraping.urls')),
+    path('api/',include('OCR.urls')),
 ]
 
