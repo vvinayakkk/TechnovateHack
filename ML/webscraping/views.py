@@ -132,3 +132,47 @@ def get_top_products(request):
             'message': str(e),
             'query': search_query
         }, status=500)
+    
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_first_product(request):
+    """
+    API endpoint to get the first Amazon product for the given search query
+    """
+    try:
+        # Get search query from URL parameters
+        search_query = request.GET.get('query', 'laptop')
+        logger.info(f"Received request for query (first product): {search_query}")
+        
+        # Get products
+        products = get_amazon_products(search_query)
+        
+        if not products:
+            return JsonResponse({
+                'status': 'success',
+                'query': search_query,
+                'message': 'No products found',
+                'product': None
+            })
+
+        # Return only the first product
+        first_product = products[0]
+        
+        logger.info(f"Returning first product: {first_product['title'][:30]}...")
+        
+        response_data = {
+            'status': 'success',
+            'query': search_query,
+            'product': first_product
+        }
+        
+        return JsonResponse(response_data)
+    except Exception as e:
+        logger.error(f"Error in get_first_product view: {str(e)}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e),
+            'query': search_query
+        }, status=500)

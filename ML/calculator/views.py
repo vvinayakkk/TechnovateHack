@@ -315,7 +315,7 @@ def analyze_carbon_footprint(request):
         print("Received data:", data)
         
         # Handle userID
-        user_id_str = data.get('userID') or data.get('_id')
+        user_id_str =  data.get('_id')
         if not user_id_str:
             return JsonResponse({'error': 'userID is required'}, status=400)
         

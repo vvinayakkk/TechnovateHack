@@ -219,7 +219,8 @@ class AudioTranscriptionView(APIView):
             predicted_ids, 
             skip_special_tokens=True
         )[0]
-        
+
+        print("transcription:",transcription)
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         

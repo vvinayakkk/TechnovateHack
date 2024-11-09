@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bap^)i*9f-dzz(#j=1i(y(q0@=87w582%x_vku=qg$9!+&=nt-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -84,6 +84,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Password validation
@@ -127,6 +128,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React app URL
+    "http://localhost:5173",
+    "http://192.168.137.37:5173"
+        # React app URL
     # Add other allowed origins if needed
 ]
