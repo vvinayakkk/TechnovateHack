@@ -1,184 +1,160 @@
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Sphere } from "@react-three/drei"
-import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { LeafIcon, DropletIcon, TreesIcon } from "lucide-react"
+import React from "react";
+import { MdAddTask, MdAttachMoney, MdBarChart, MdFileCopy } from "react-icons/md";
+import { BadgePercentIcon } from "lucide-react";
+import { Pie, Line, Bar } from "react-chartjs-2";
+import { useOutletContext } from "react-router-dom";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  BarElement,
+  Title,
+} from "chart.js";
 
-// Sample data
-const waterData = [
-  { name: "Mon", you: 40, world: 20 },
-  { name: "Tue", you: 60, world: 30 },
-  { name: "Wed", you: 45, world: 25 },
-  { name: "Thu", you: 55, world: 35 },
-  { name: "Fri", you: 50, world: 30 },
-  { name: "Sat", you: 65, world: 40 },
-  { name: "Sun", you: 40, world: 25 },
-]
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  BarElement,
+  Title
+);
 
-const emissionData = [
-  { name: "Transport", value: 45 },
-  { name: "Energy", value: 35 },
-  { name: "Food", value: 20 },
-]
-
-const COLORS = ["#34d399", "#60a5fa", "#a78bfa"]
-
-function Globe() {
-  return (
-    <Canvas>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <Sphere args={[1, 32, 32]}>
-        <meshStandardMaterial color="#34d399" wireframe />
-      </Sphere>
-      <OrbitControls autoRotate enableZoom={false} />
-    </Canvas>
-  )
-}
-
-export default function Component() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-8">
-      {/* Background Pattern */}
-      <div className="fixed inset-0 -z-10 opacity-20">
-        <svg className="h-full w-full">
-          <pattern id="pattern" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
-            <path d="M0 32V.5H32" fill="none" stroke="rgba(52, 211, 153, 0.2)" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#pattern)" />
-        </svg>
-      </div>
-
-      {/* Header */}
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-4xl font-bold text-green-800 mb-8"
-      >
-        Morning, eco warrior!
-      </motion.h1>
-
-      {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {[
-          { title: "Carbon Saved", value: "2 KG", icon: LeafIcon },
-          { title: "Global Rank", value: "Top 19%", icon: TreesIcon },
-          { title: "Impact Score", value: "81/100", icon: DropletIcon },
-        ].map((metric, i) => (
-          <motion.div
-            key={metric.title}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Card className="bg-white/50 backdrop-blur-sm border-green-200">
-              <CardContent className="flex items-center p-6">
-                <metric.icon className="h-8 w-8 text-green-500 mr-4" />
-                <div>
-                  <p className="text-sm text-green-600">{metric.title}</p>
-                  <p className="text-2xl font-bold text-green-800">{metric.value}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Main Content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Daily World Emissions */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="bg-white/50 backdrop-blur-sm border-green-200">
-            <CardHeader>
-              <CardTitle className="text-green-800">Daily World Emissions</CardTitle>
-            </CardHeader>
-            <CardContent className="h-[300px]">
-              <Globe />
-              <p className="text-center text-green-600 mt-4">400 Metric Tons</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Your Emissions vs World */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="bg-white/50 backdrop-blur-sm border-green-200">
-            <CardHeader>
-              <CardTitle className="text-green-800">Your Emissions vs World</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={emissionData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {emissionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Daily Water Saving */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <Card className="bg-white/50 backdrop-blur-sm border-green-200">
-          <CardHeader>
-            <CardTitle className="text-green-800">Daily Water Saving</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={waterData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorYou" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#34d399" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorWorld" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <Area
-                  type="monotone"
-                  dataKey="you"
-                  stroke="#34d399"
-                  fillOpacity={1}
-                  fill="url(#colorYou)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="world"
-                  stroke="#60a5fa"
-                  fillOpacity={1}
-                  fill="url(#colorWorld)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </motion.div>
+const DashboardCard = ({ title, value, icon }) => (
+  <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md flex items-center">
+    <div className="mr-4 text-green-500 dark:text-green-400">{icon}</div>
+    <div>
+      <div className="text-gray-600 dark:text-gray-300 text-sm">{title}</div>
+      <div className="text-2xl font-bold">{value}</div>
     </div>
-  )
-}
+  </div>
+);
+
+const projects = [
+  { name: "Deep Patel", progress: 80 },
+  { name: "Rajesh Mishra", progress: 60 },
+  { name: "Shri Hari", progress: 40 },
+  { name: "Ashley Frenandes", progress: 90 },
+];
+
+const PieChart = () => {
+  const data = {
+    labels: ["Emission Saved", "Electricity Usage", "Car Usage"],
+    datasets: [
+      {
+        data: [12, 19, 7],
+        backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(153, 102, 255, 0.6)"],
+      },
+    ],
+  };
+  return <Pie data={data} />;
+};
+
+const LineChart = () => {
+  const data = {
+    labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    datasets: [
+      {
+        label: "My Water Saved (Liters)",
+        data: [5, 9, 7, 8, 6],
+        borderColor: "rgba(34, 193, 195, 1)",
+        fill: true,
+        backgroundColor: "rgba(34, 193, 195, 0.5)",
+      },
+      {
+        label: "Friend's Water Saved (Liters)",
+        data: [3, 6, 5, 7, 4],
+        borderColor: "rgba(255, 99, 132, 1)",
+        fill: true,
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
+  return <Line data={data} />;
+};
+
+const BarChart = () => {
+  const data = {
+    labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    datasets: [
+      { label: "Emission Generated", data: [5, 12, 19, 3, 5, 2, 8], backgroundColor: "rgba(75, 192, 192, 0.6)" },
+      { label: "Emission Saved", data: [3, 7, 11, 5, 8, 3, 4], backgroundColor: "rgba(54, 162, 235, 0.6)" },
+    ],
+  };
+  return <Bar data={data} />;
+};
+
+const Dashboard = () => {
+  localStorage.setItem("theme", "dark");
+  const { username } = useOutletContext();
+
+  return (
+    <div className="p-4 min-h-screen bg-gray-50 dark:bg-[rgb(0_6_12)] dark:text-white">
+      <h2 className="pt-4 text-3xl font-bold mb-6">Morning, {username}!</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <DashboardCard title="Carbon Emission Saved" value="2 KG" icon={<MdBarChart className="text-3xl" />} />
+        <DashboardCard title="Beats" value="81% of our users" icon={<BadgePercentIcon className="text-3xl" />} />
+        <DashboardCard title="Water Saved" value="50 Liters" icon={<MdFileCopy className="text-3xl" />} />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-4">Daily World Emissions</h3>
+          <div className="text-red-300 text-center">400 Metric Tons</div>
+        </div>
+
+        <div className="dark:bg-black bg-white text-black dark:text-white p-2 px-4 pt-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-4">Friends</h3>
+          <div className="space-y-4">
+            {projects.map((project, index) => (
+              <div key={index} className="flex items-center">
+                <img
+                  className="w-10 h-10 rounded-full mr-4"
+                  src={`https://randomuser.me/api/portraits/thumb/men/${index + 10}.jpg`}
+                  alt="User"
+                />
+                <div className="w-full">
+                  <div className="flex justify-between mb-2">
+                    <p className="font-semibold">{project.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{`${project.progress}%`}</p>
+                  </div>
+                  <div className="bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div className="bg-green-600 h-2 rounded-full" style={{ width: `${project.progress}%` }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-4">Emission Breakdown</h3>
+          <PieChart />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-4">Daily Water Saving</h3>
+          <LineChart />
+        </div>
+        <div className="dark:bg-black bg-white text-black dark:text-white p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-4">Carbon Emission Overview</h3>
+          <BarChart />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

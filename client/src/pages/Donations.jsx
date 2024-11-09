@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CreditCard, Wallet, Leaf, PersonStanding, School, Scale } from 'lucide-react'
 import { motion } from 'framer-motion'
-import MetamaskForm from '@/components/MetamaskForm'
+// import MetamaskForm from '@/components/MetamaskForm'
+
 import {
   Bar,
   Line,
@@ -376,7 +377,7 @@ const MetaMaskModal = ({ isOpen, setIsOpen, amount, currency }) => {
             You are about to donate {amount} {currency} using MetaMask. Please confirm the transaction in your MetaMask wallet.
           </DialogDescription>
         </DialogHeader>
-        <MetamaskForm amount={amount} currency={currency} />
+        {/* <MetamaskForm amount={amount} currency={currency} /> */}
         {/* Add MetaMask integration here */}
         <Button onClick={() => setIsOpen(false)} className="bg-green-500 hover:bg-green-600 text-white">Close</Button>
       </DialogContent>
