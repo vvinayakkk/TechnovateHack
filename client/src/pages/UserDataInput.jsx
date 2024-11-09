@@ -14,38 +14,45 @@ const UserDataInput = () => {
   }
 
   const [formData, setFormData] = useState({
-    heatingEnergySource: '',
-    transport: '',
-    vehicleType: '',
-    monthlyGroceryBill: '',
-    frequencyTravelingByAir: '',
-    wasteBagSize: '',
-    wasteBagWeeklyCount: '',
-    energyEfficiency: false,
-    recycling: [], // Use an array for multiple selections
-    cookingDevices: [], // Use an array for multiple selections
+    userID: user.id, // Add the user ID
+    bodyType: '', // String type
+    sex: '', // String type
+    diet: '', // String type
+    howOftenShower: '', // String type
+    heatingEnergySource: '', // String type
+    transport: '', // String type
+    vehicleType: '', // String type
+    socialActivity: '', // String type
+    monthlyGroceryBill: '', // Number type
+    frequencyOfTravelingByAir: '', // Number type
+    vehicleMonthlyDistanceKm: '', // Number type
+    wasteBagSize: '', // String type
+    wasteBagWeeklyCount: '', // Number type
+    howLongTvpCDailyHour: '', // Number type
+    howManyNewClothesMonthly: '', // Number type
+    howLongInternetDailyHour: '', // Number type
+    energyEfficiency: '', // String type
+    recycling: [], // Array type
+    cookingWith: [], // Array type
   });
 
-  // Handle input changes for all types of fields
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (type === 'checkbox') {
-      if (name === 'energyEfficiency') {
-        setFormData({
-          ...formData,
-          [name]: checked,
-        });
-      } else {
-        // Handle checkbox arrays (multi-select options)
-        setFormData((prevData) => {
-          const newSelections = checked
-            ? [...prevData[name], value]
-            : prevData[name].filter((item) => item !== value);
+      // Handle checkboxes for recycling and cookingDevices fields
+      setFormData((prevData) => {
+        const newSelections = checked
+          ? [...prevData[name], value] // Add value if checked
+          : prevData[name].filter((item) => item !== value); // Remove value if unchecked
 
-          return { ...prevData, [name]: newSelections };
-        });
-      }
+        return { ...prevData, [name]: newSelections };
+      });
+    } else if (type === 'radio') {
+      setFormData({
+        ...formData,
+        [name]: value, // For radio buttons, set the value of the selected option
+      });
     } else {
       setFormData({
         ...formData,
@@ -54,23 +61,70 @@ const UserDataInput = () => {
     }
   };
 
-  // Handle form submission to the backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Form data you want to send
-    const dataToSubmit = {
-      ...formData,
-      userId: user.id, // Optionally add the user ID if needed
+    // List of predefined values for random fields
+    const randomBodyTypes = ['overweight', 'obese', 'underweight', 'normal'];
+    const randomSex = ['female', 'male'];
+    const randomDiet = ['pescatarian', 'vegetarian', 'omnivore', 'vegan'];
+    const randomShowerFrequency = ['daily', 'less frequently', 'more frequently', 'twice a day'];
+    const randomSocialActivity = ['often', 'never', 'sometimes'];
+    const randomEnergyEfficiency = ['No', 'Sometimes', 'Yes'];
+
+    const getRandomBetween1And30 = () => Math.floor(Math.random() * 30) + 1;
+
+    const randomData = {
+      bodyType: randomBodyTypes[Math.floor(Math.random() * randomBodyTypes.length)],
+      sex: randomSex[Math.floor(Math.random() * randomSex.length)],
+      diet: randomDiet[Math.floor(Math.random() * randomDiet.length)],
+      howOftenShower: randomShowerFrequency[Math.floor(Math.random() * randomShowerFrequency.length)],
+      socialActivity: randomSocialActivity[Math.floor(Math.random() * randomSocialActivity.length)],
+      energyEfficiency: formData.energyEfficiency || randomEnergyEfficiency[Math.floor(Math.random() * randomEnergyEfficiency.length)],
+      recycling: formData.recycling.length ? formData.recycling : ['Plastic'], 
+      cookingWith: formData.cookingWith.length ? formData.cookingWith : ['Stove'], 
+      wasteBagWeeklyCount: formData.wasteBagWeeklyCount || getRandomBetween1And30(),
+      howLongTvpCDailyHour: formData.howLongTvpCDailyHour || getRandomBetween1And30(),
+      howManyNewClothesMonthly: formData.howManyNewClothesMonthly || getRandomBetween1And30(),
+      howLongInternetDailyHour: formData.howLongInternetDailyHour || getRandomBetween1And30(),
     };
 
+    const dataToSubmit = {
+      ...formData,
+      ...randomData, // Merge user input with generated random data
+    };
+
+    // Ensure the data is in the specified order
+    const orderedData = {
+      userID: dataToSubmit.userID,
+      bodyType: dataToSubmit.bodyType,
+      sex: dataToSubmit.sex,
+      diet: dataToSubmit.diet,
+      howOftenShower: dataToSubmit.howOftenShower,
+      heatingEnergySource: dataToSubmit.heatingEnergySource,
+      transport: dataToSubmit.transport,
+      vehicleType: dataToSubmit.vehicleType,
+      socialActivity: dataToSubmit.socialActivity,
+      monthlyGroceryBill: dataToSubmit.monthlyGroceryBill,
+      frequencyOfTravelingByAir: dataToSubmit.frequencyOfTravelingByAir,
+      vehicleMonthlyDistanceKm: dataToSubmit.vehicleMonthlyDistanceKm,
+      wasteBagSize: dataToSubmit.wasteBagSize,
+      wasteBagWeeklyCount: dataToSubmit.wasteBagWeeklyCount,
+      howLongTvpCDailyHour: dataToSubmit.howLongTvpCDailyHour,
+      howManyNewClothesMonthly: dataToSubmit.howManyNewClothesMonthly,
+      howLongInternetDailyHour: dataToSubmit.howLongInternetDailyHour,
+      energyEfficiency: dataToSubmit.energyEfficiency,
+      recycling: dataToSubmit.recycling,
+      cookingWith: dataToSubmit.cookingWith,
+    };
+
+    console.log('Submitting form:', orderedData);
+
     try {
-      const response = await axios.post('/api/submit-form', dataToSubmit);
+      const response = await axios.post('http://localhost:3000/user/create', orderedData);
       console.log('Form submitted successfully:', response.data);
-      // Optionally handle the success response, e.g., show a success message
     } catch (error) {
       console.error('Error submitting form:', error);
-      // Optionally handle the error response, e.g., show an error message
     }
   };
 
@@ -84,17 +138,17 @@ const UserDataInput = () => {
           {
             id: 'heatingEnergySource',
             label: 'Heating Energy Source',
-            options: ['Select an option', 'Electricity', 'Gas', 'Oil', 'Wood'],
+            options: ['Select an option', 'coal', 'natural gas', 'wood', 'electricity'],
           },
           {
             id: 'transport',
             label: 'Preferred Transport',
-            options: ['Select an option', 'Walking/Bicycle', 'Private', 'Walking'],
+            options: ['Select an option', 'walk/bicycle', 'private', 'public'],
           },
           {
             id: 'vehicleType',
             label: 'Vehicle Type (Fuel)',
-            options: ['Select an option', 'Petrol', 'Diesel', 'Electric', 'LPG', 'Hybrid'],
+            options: ['Select an option', 'petrol', 'diesel', 'electric', 'lpg', 'hybrid'],
           },
           {
             id: 'wasteBagSize',
@@ -122,97 +176,54 @@ const UserDataInput = () => {
           </div>
         ))}
 
-        {/* Input Fields */}
-        {[
-          {
-            id: 'monthlyGroceryBill',
-            label: 'Monthly Grocery Bill (USD)',
-            type: 'number',
-            placeholder: 'e.g. 300',
-          },
-          {
-            id: 'frequencyTravelingByAir',
-            label: 'Frequency of Traveling by Air (per month)',
-            type: 'number',
-            placeholder: 'e.g. 2',
-          },
-          {
-            id: 'wasteBagWeeklyCount',
-            label: 'Waste Bag Weekly Count',
-            type: 'number',
-            placeholder: 'e.g. 3',
-          },
-        ].map((input) => (
-          <div key={input.id} className="flex flex-col">
-            <label htmlFor={input.id} className="text-lg font-medium text-gray-700 dark:text-gray-300">
-              {input.label}
-            </label>
-            <input
-              type={input.type}
-              id={input.id}
-              name={input.id}
-              value={formData[input.id]}
-              onChange={handleChange}
-              placeholder={input.placeholder}
-              className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
-            />
-          </div>
-        ))}
-
-        {/* Checkbox and Multiple Select Options */}
-        {[
-          {
-            id: 'recycling',
-            label: 'What types of waste do you recycle?',
-            options: ['Paper', 'Plastic', 'Glass', 'Metal'],
-          },
-          {
-            id: 'cookingDevices',
-            label: 'What devices do you use for cooking?',
-            options: ['Stove', 'Oven', 'Microwave', 'Grill', 'Airfryer'],
-          },
-        ].map((checkboxGroup) => (
-          <div key={checkboxGroup.id} className="flex flex-col mb-6">
-            <label htmlFor={checkboxGroup.id} className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {checkboxGroup.label}
-            </label>
-            <div className="flex flex-col space-y-2">
-              {checkboxGroup.options.map((option, index) => (
-                <div key={index} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`${checkboxGroup.id}-${option}`}
-                    name={checkboxGroup.id}
-                    value={option}
-                    checked={formData[checkboxGroup.id]?.includes(option)} // Check if the option is selected
-                    onChange={handleChange}
-                    className="form-checkbox h-4 w-4 text-green-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0 focus:ring-green-500"
-                  />
-                  <label
-                    htmlFor={`${checkboxGroup.id}-${option}`}
-                    className="ml-2 text-gray-700 dark:text-gray-300"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Energy Efficiency Checkbox */}
-        <div className="flex items-center space-x-2">
+        {/* Number Inputs for Vehicle Monthly Distance and Frequency of Travel by Air */}
+        <div className="flex flex-col mb-6">
+          <label htmlFor="vehicleMonthlyDistanceKm" className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Vehicle Monthly Distance (km)
+          </label>
           <input
-            type="checkbox"
-            id="energyEfficiency"
-            name="energyEfficiency"
-            checked={formData.energyEfficiency}
+            type="number"
+            id="vehicleMonthlyDistanceKm"
+            name="vehicleMonthlyDistanceKm"
+            value={formData.vehicleMonthlyDistanceKm}
             onChange={handleChange}
-            className="h-5 w-5 text-green-600 rounded border-gray-300 dark:border-gray-600 focus:ring-green-500"
+            className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
           />
-          <label htmlFor="energyEfficiency" className="text-lg font-medium text-gray-700 dark:text-gray-300">
+        </div>
+
+        <div className="flex flex-col mb-6">
+          <label htmlFor="frequencyOfTravelingByAir" className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Frequency of Traveling by Air (times per month)
+          </label>
+          <input
+            type="number"
+            id="frequencyOfTravelingByAir"
+            name="frequencyOfTravelingByAir"
+            value={formData.frequencyOfTravelingByAir}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
+          />
+        </div>
+
+        {/* Energy Efficiency Dropdown */}
+        <div className="flex flex-col mb-6">
+          <label htmlFor="energyEfficiency" className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
             Do you prefer energy-efficient devices?
           </label>
+          <select
+            id="energyEfficiency"
+            name="energyEfficiency"
+            value={formData.energyEfficiency}
+            onChange={handleChange}
+            className="mt-2 p-3 border rounded-lg border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 dark:text-white transition-all"
+          >
+            <option value="">Select an option</option>
+            {['No', 'Sometimes', 'Yes'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Submit Button */}
