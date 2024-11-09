@@ -16,6 +16,7 @@ import { Loader2 } from 'lucide-react';
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
   const username = user?.username || "Buddy";
+  console.log(user?.username);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/donations" element={<Donations />} />
+            <Route path="/donate" element={<Donations />} />
             <Route path="/analytics" element={<Analytics />} />
           </Route>
         </Route>
