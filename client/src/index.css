@@ -81,3 +81,10 @@
     @apply bg-background text-text;
   }
 }
+
+
+::-webkit-scrollbar {
+  width: 0px; 
+  height: 0px; 
+}
+

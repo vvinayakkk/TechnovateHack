@@ -180,34 +180,74 @@ const Leaderboard = () => {
       </div>
 
       {/* Top 3 Players Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {leaderboardData.slice(0, 3).map((player) => (
-          <div
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    {leaderboardData.slice(0, 3).map((player) => (
+        <div
             key={player.place}
-            className={`p-6 rounded-lg shadow-md bg-white dark:bg-black border ${
-              player.place === 1 ? 'border-yellow-500' : player.place === 2 ? 'border-gray-500' : 'border-orange-500'
-            } hover:shadow-xl transition-shadow`}
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-green-800">{player.name}</h2>
-              <span
-                className={`${
-                  player.place === 1
-                    ? 'text-yellow-500'
+            className={`relative p-8 rounded-xl shadow-lg transform transition-transform hover:-translate-y-2 bg-gradient-to-br ${
+                player.place === 1
+                    ? 'from-yellow-100 to-yellow-300'
                     : player.place === 2
-                    ? 'text-gray-500'
-                    : 'text-orange-500'
-                } text-4xl`}
-              >
-                {player.place === 1 ? '🏆' : player.place === 2 ? '🥈' : '🥉'}
-              </span>
+                    ? 'from-gray-100 to-gray-300'
+                    : 'from-orange-100 to-orange-300'
+            } border ${
+                player.place === 1
+                    ? 'border-yellow-500'
+                    : player.place === 2
+                    ? 'border-gray-500'
+                    : 'border-orange-500'
+            }`}
+        >
+            {/* Top Badge with Crown/Icon */}
+            <div className="absolute -top-4 -right-4 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md border-4 border-white dark:border-black">
+                <span
+                    className={`text-3xl ${
+                        player.place === 1
+                            ? 'text-yellow-500'
+                            : player.place === 2
+                            ? 'text-gray-500'
+                            : 'text-orange-500'
+                    }`}
+                >
+                    {player.place === 1 ? '👑' : player.place === 2 ? '🥈' : '🥉'}
+                </span>
             </div>
-            <p className="text-gray-600 mt-2">CO2 Reduction: {player.co2Reduction}</p>
-            <p className="text-gray-600">Sustainable Practices: {player.practices}</p>
-            <p className="text-gray-600">Impact Score: {player.impactScore}</p>
-          </div>
-        ))}
-      </div>
+
+            {/* Player Name and Ranking */}
+            <div className="flex flex-col items-start space-y-1">
+                <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">{player.name}</h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400">Rank {player.place}</p>
+            </div>
+
+            {/* Player Details */}
+            <div className="mt-4 space-y-2">
+                <p className="text-gray-700 dark:text-gray-300 font-medium">
+                    <span className="font-bold text-gray-800 dark:text-gray-200">CO2 Reduction:</span> {player.co2Reduction}
+                </p>
+                <p className="text-gray-700 dark:text-gray-300 font-medium">
+                    <span className="font-bold text-gray-800 dark:text-gray-200">Practices:</span> {player.practices}
+                </p>
+            </div>
+
+            {/* Impact Score Progress Bar */}
+            <div className="mt-4">
+                <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Impact Score</span>
+                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{player.impactScore}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                    <div
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                            player.place === 1 ? 'bg-yellow-500' : player.place === 2 ? 'bg-gray-500' : 'bg-orange-500'
+                        }`}
+                        style={{ width: `${player.impactScore}%` }}
+                    ></div>
+                </div>
+            </div>
+        </div>
+    ))}
+</div>
+
 
       {/* Leaderboard Table Section */}
       <div className="overflow-x-auto">
