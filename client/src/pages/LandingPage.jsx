@@ -65,7 +65,7 @@ export default function CoolLandingPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-2xl font-bold">CoolBrand</h1>
+            <h1 className="text-2xl font-bold">EcoTrack</h1>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -92,8 +92,8 @@ export default function CoolLandingPage() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-center z-10"
           >
-            <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Welcome to the Future</h2>
-            <p className="text-xl md:text-2xl mb-8">Experience innovation like never before</p>
+            <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Track Your Carbon Footprint</h2>
+            <p className="text-xl md:text-2xl mb-8">Take control of your environmental impact and make a difference.</p>
             <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
               if (isSignedIn) {
                 navigate('/dashboard');
@@ -113,7 +113,7 @@ export default function CoolLandingPage() {
             {[...Array(50)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute rounded-full bg-primary/10"
+                className="absolute rounded-full bg-green-200/10"
                 style={{
                   width: Math.random() * 100 + 50,
                   height: Math.random() * 100 + 50,
@@ -152,14 +152,14 @@ export default function CoolLandingPage() {
               transition={{ duration: 0.5 }}
               className="mb-20"
             >
-              <h3 className="text-3xl font-bold mb-6">Innovative Features</h3>
-              <p className="text-xl">Discover the cutting-edge technology that sets us apart.</p>
+              <h3 className="text-3xl font-bold mb-6">Why Track Your Carbon Footprint?</h3>
+              <p className="text-xl">Understanding your carbon impact is the first step to reducing it. Here’s how we can help:</p>
             </motion.div>
             <div className="grid md:grid-cols-3 gap-10">
               {[
-                { title: "AI-Powered", description: "Harness the power of artificial intelligence" },
-                { title: "Eco-Friendly", description: "Sustainable solutions for a better tomorrow" },
-                { title: "Seamless Integration", description: "Effortlessly connect with your existing systems" }
+                { title: "Personalized Insights", description: "Track your daily activities and see how they impact your carbon footprint." },
+                { title: "Effective Suggestions", description: "Get personalized suggestions to reduce your carbon impact based on your lifestyle." },
+                { title: "Sustainable Choices", description: "Discover more sustainable alternatives to your everyday choices." }
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -189,8 +189,8 @@ export default function CoolLandingPage() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-3xl font-bold mb-6">Ready to Transform Your Experience?</h3>
-              <p className="text-xl mb-8">Join us on this exciting journey into the future.</p>
+              <h3 className="text-3xl font-bold mb-6">Start Reducing Your Footprint Today</h3>
+              <p className="text-xl mb-8">Join us in the movement to make the world a greener place, one step at a time.</p>
               <Button size="lg" className="text-lg px-8 py-6" onClick={() => {
                 navigate('/signup')
               }}>
@@ -203,7 +203,7 @@ export default function CoolLandingPage() {
 
       <footer className="bg-muted py-10">
         <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 CoolBrand. All rights reserved.</p>
+          <p>&copy; 2024 EcoTrack. All rights reserved. Together, we can make a difference.</p>
         </div>
       </footer>
     </div>
