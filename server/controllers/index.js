@@ -1,6 +1,7 @@
 
 import {createUser,getUser ,leadearboard} from "./userControllers/manageUser.js"
 import {acceptFriendRequest,rejectFriendRequest,sendFriendRequest,getFriendList} from "./friendsController/frineds.js"
+import { createEvent,registerForEvent,getEvents} from "./eventController/event.js"
 
 export{
     createUser,
@@ -9,5 +10,8 @@ export{
     acceptFriendRequest,
     rejectFriendRequest,
     sendFriendRequest,
-    getFriendList
+    getFriendList,
+    createEvent,
+    registerForEvent,
+    getEvents,
 }
