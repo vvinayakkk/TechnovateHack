@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --text: 224 24% 9%;
-    --background: 0 0% 100%;
-    --primary: 240 5.9% 10%;
-    --secondary: 240 4.8% 95.9%;
-    --accent: 240 4.8% 95.9%;
+--text: #05061a;
+    --background: #ecfae5;
+    --primary: #3f7416;
+    --secondary: #85e36d;
+    --accent: #8ece27;
     
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;

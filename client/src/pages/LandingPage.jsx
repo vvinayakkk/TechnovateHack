@@ -1,10 +1,132 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform, useSpring, useAnimation } from 'framer-motion'
-import { Moon, Sun, ChevronDown } from 'lucide-react'
+import { motion, useScroll, useSpring, useAnimation } from 'framer-motion'
+import { Moon, Sun, ChevronDown, Leaf, Wind, Zap } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import useTheme from '@/hooks/useTheme'
 import { useNavigate } from 'react-router-dom'
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react'
+
+const ModernParticleBackground = ({ theme }) => {
+  const particles = [...Array(40)].map((_, i) => ({
+    id: i,
+    size: Math.random() * 40 + 20, // Larger particles
+    initialX: Math.random() * 100,
+    initialY: Math.random() * 100,
+    duration: Math.random() * 20 + 15 // Slower, more graceful movement
+  }))
+
+  const getParticleColor = (index) => {
+    // Create a sophisticated color palette based on theme
+    const lightThemeColors = [
+      'rgba(72, 187, 120, 0.15)', // Green
+      'rgba(104, 211, 145, 0.15)', // Light green
+      'rgba(49, 151, 149, 0.15)',  // Teal
+      'rgba(56, 178, 172, 0.15)',  // Cyan
+      'rgba(49, 151, 149, 0.15)'   // Darker teal
+    ]
+    
+    const darkThemeColors = [
+      'rgba(34, 197, 94, 0.08)',  // Light green
+      'rgba(16, 185, 129, 0.08)', // Emerald
+      'rgba(20, 184, 166, 0.08)', // Teal
+      'rgba(6, 182, 212, 0.08)',  // Cyan
+      'rgba(45, 212, 191, 0.08)'  // Turquoise
+    ]
+    
+    const colors = theme === 'dark' ? darkThemeColors : lightThemeColors
+    return colors[index % colors.length]
+  }
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Large Gradient Orbs */}
+      <div className="absolute inset-0">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`orb-${i}`}
+            className="absolute rounded-full blur-3xl"
+            style={{
+              width: '40vw',
+              height: '40vw',
+              backgroundColor: theme === 'dark' 
+                ? `rgba(16, 185, 129, 0.05)`
+                : `rgba(16, 185, 129, 0.03)`,
+              left: `${i * 30}%`,
+              top: `${i * 20}%`,
+            }}
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: i * 5,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Modern Floating Particles */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full mix-blend-screen backdrop-blur-sm"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            backgroundColor: getParticleColor(particle.id),
+            left: `${particle.initialX}%`,
+            top: `${particle.initialY}%`,
+            border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+          }}
+          animate={{
+            x: [
+              0,
+              Math.random() * 200 - 100,
+              Math.random() * -200 + 100,
+              0
+            ],
+            y: [
+              0,
+              Math.random() * 200 - 100,
+              Math.random() * -200 + 100,
+              0
+            ],
+            scale: [1, Math.random() * 0.5 + 1, 1],
+            rotate: [0, Math.random() * 360, 0]
+          }}
+          transition={{
+            duration: particle.duration,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      ))}
+
+      {/* Gradient Overlay */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background"
+        style={{
+          backdropFilter: 'blur(100px)',
+        }}
+      />
+
+      {/* Mesh Grid Effect */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          backgroundImage: theme === 'dark' 
+            ? 'linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)'
+            : 'linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }}
+      />
+    </div>
+  )
+}
 
 const useScrollAnimation = () => {
   const controls = useAnimation()
@@ -36,11 +158,25 @@ const useScrollAnimation = () => {
   return { ref, controls, isVisible }
 }
 
-export default function EcoLandingPage() {
+const StatsCard = ({ number, label }) => (
+  <div className="flex flex-col items-center p-4 bg-card/50 backdrop-blur-sm rounded-lg">
+    <motion.span 
+      className="text-3xl md:text-4xl font-bold text-green-500"
+      initial={{ opacity: 0, scale: 0.5 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {number}
+    </motion.span>
+    <span className="text-sm md:text-base text-center">{label}</span>
+  </div>
+)
+
+export default function CarbonTrackerLanding() {
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { scrollYProgress } = useScroll()
-  const { isSignedIn } = useUser();
+  const { isSignedIn } = useUser()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -52,35 +188,63 @@ export default function EcoLandingPage() {
   const featureAnimation2 = useScrollAnimation()
   const featureAnimation3 = useScrollAnimation()
 
+  const features = [
+    {
+      icon: <Leaf className="w-8 h-8 mb-4 text-green-500" />,
+      title: "Personal Carbon Calculator",
+      description: "Track and understand your daily carbon emissions through our AI-powered calculator"
+    },
+    {
+      icon: <Zap className="w-8 h-8 mb-4 text-yellow-500" />,
+      title: "Smart Reduction Goals",
+      description: "Set personalized goals and receive actionable recommendations to reduce your footprint"
+    },
+    {
+      icon: <Wind className="w-8 h-8 mb-4 text-blue-500" />,
+      title: "Impact Dashboard",
+      description: "Visualize your progress and see your contribution to global carbon reduction efforts"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-primary z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-green-500 z-50"
         style={{ scaleX }}
       />
+      
+      {/* Mobile-optimized Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
+            className="flex items-center space-x-2"
           >
-            <h1 className="text-2xl font-bold">EcoVision</h1>
+            <Leaf className="w-6 h-6 text-green-500" />
+            <h1 className="text-xl md:text-2xl font-bold">CarbonTrace</h1>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              className="hidden md:inline-flex"
+              onClick={() => navigate('/how-it-works')}
+            >
+              How it Works
+            </Button>
             <Button variant="ghost" size="icon" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
-          </motion.div>
+          </div>
         </div>
       </nav>
 
-      <main>
-        <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <main className="pt-16">
+        {/* Hero Section with Enhanced Background */}
+        <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
+        <ModernParticleBackground theme={theme} />
+          
           <motion.div
             ref={heroAnimation.ref}
             initial="hidden"
@@ -90,46 +254,48 @@ export default function EcoLandingPage() {
               hidden: { opacity: 0, y: 50 }
             }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-center z-10"
+            className="text-center z-10 max-w-4xl mx-auto"
           >
-            <h2 className="text-5xl md:text-7xl font-extrabold mb-6">Championing a Greener Future</h2>
-            <p className="text-xl md:text-2xl mb-8">Explore sustainable innovations for a healthier planet</p>
-            <Button size="lg" className="text-lg bg-secondary text-primary hover:text-black px-8 py-6" onClick={() => {
-              if (isSignedIn) {
-                navigate('/dashboard');
-              } else {
-                navigate('/signin');
-              }
-            }}>
-              Join the Movement
-            </Button>
-          </motion.div>
-          <motion.div
-            className="absolute inset-0 z-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            {[...Array(50)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-primary/10"
-                style={{
-                  width: Math.random() * 100 + 50,
-                  height: Math.random() * 100 + 50,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
+              Reduce Your Carbon Footprint
+            </h2>
+            <p className="text-lg md:text-xl lg:text-2xl mb-8 max-w-2xl mx-auto px-4">
+              Track, understand, and reduce your carbon emissions with our AI-powered platform. 
+              Make a real impact on climate change, one decision at a time.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
+              <Button 
+                size="lg" 
+                className="text-base md:text-lg bg-green-500 hover:bg-green-600 text-white px-6 md:px-8 py-4 md:py-6 w-full sm:w-auto"
+                onClick={() => {
+                  if (isSignedIn) {
+                    navigate('/dashboard');
+                  } else {
+                    navigate('/signin');
+                  }
                 }}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{
-                  duration: Math.random() * 2 + 1,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                }}
-              />
-            ))}
+              >
+                Start Tracking
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 w-full sm:w-auto"
+                onClick={() => navigate('/how-it-works')}
+              >
+                Learn More
+              </Button>
+            </div>
+
+            {/* Stats Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-3xl mx-auto px-4">
+              <StatsCard number="2M+" label="Trees Saved" />
+              <StatsCard number="50K+" label="Active Users" />
+              <StatsCard number="15K" label="Tons CO₂ Reduced" />
+              <StatsCard number="98%" label="User Satisfaction" />
+            </div>
           </motion.div>
+
           <motion.div
             className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
             animate={{ y: [0, 10, 0] }}
@@ -139,6 +305,7 @@ export default function EcoLandingPage() {
           </motion.div>
         </section>
 
+        {/* Features Section */}
         <section className="py-20 bg-muted">
           <div className="container mx-auto px-4">
             <motion.div
@@ -150,17 +317,17 @@ export default function EcoLandingPage() {
                 hidden: { opacity: 0, y: 50 }
               }}
               transition={{ duration: 0.5 }}
-              className="mb-20"
+              className="mb-20 text-center"
             >
-              <h3 className="text-3xl font-bold mb-6">Eco-Conscious Features</h3>
-              <p className="text-xl">Discover solutions designed to reduce your environmental footprint.</p>
+              <h3 className="text-2xl md:text-3xl font-bold mb-6">Smart Carbon Management</h3>
+              <p className="text-base md:text-xl max-w-2xl mx-auto">
+                Our platform helps you understand and reduce your carbon footprint through 
+                personalized insights and actionable recommendations.
+              </p>
             </motion.div>
-            <div className="grid md:grid-cols-3 gap-10">
-              {[
-                { title: "AI-Driven Sustainability", description: "Leveraging AI to optimize energy and reduce waste" },
-                { title: "Eco-Friendly Materials", description: "Built with resources that respect our planet" },
-                { title: "Seamless Green Integration", description: "Easily adaptable to support green business initiatives" }
-              ].map((feature, index) => (
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+              {features.map((feature, index) => (
                 <motion.div
                   key={index}
                   ref={index === 0 ? featureAnimation1.ref : index === 1 ? featureAnimation2.ref : featureAnimation3.ref}
@@ -171,16 +338,18 @@ export default function EcoLandingPage() {
                     hidden: { opacity: 0, y: 50 }
                   }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
-                  className="bg-card p-6 rounded-lg shadow-lg"
+                  className="bg-card p-6 md:p-8 rounded-lg shadow-lg text-center hover:scale-105 transition-transform duration-300"
                 >
-                  <h4 className="text-xl font-semibold mb-4">{feature.title}</h4>
-                  <p>{feature.description}</p>
+                  {feature.icon}
+                  <h4 className="text-lg md:text-xl font-semibold mb-4">{feature.title}</h4>
+                  <p className="text-sm md:text-base">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* CTA Section */}
         <section className="py-20">
           <div className="container mx-auto px-4 text-center">
             <motion.div
@@ -188,13 +357,19 @@ export default function EcoLandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
+              className="max-w-2xl mx-auto"
             >
-              <h3 className="text-3xl font-bold mb-6">Ready to Make a Positive Impact?</h3>
-              <p className="text-xl mb-8">Join us in creating a sustainable future, one step at a time.</p>
-              <Button size="lg" className="text-lg px-8 py-6" onClick={() => {
-                navigate('/signup')
-              }}>
-                Start Your Journey
+              <h3 className="text-2xl md:text-3xl font-bold mb-6">Join the Climate Action Movement</h3>
+              <p className="text-base md:text-xl mb-8">
+                Every small action counts. Start your journey towards a more sustainable 
+                future and join thousands of others making a difference.
+              </p>
+              <Button 
+                size="lg" 
+                className="text-base md:text-lg bg-green-500 hover:bg-green-600 text-white px-6 md:px-8 py-4 md:py-6 w-full sm:w-auto" 
+                onClick={() => navigate('/signup')}
+              >
+                Create Free Account
               </Button>
             </motion.div>
           </div>
@@ -202,8 +377,8 @@ export default function EcoLandingPage() {
       </main>
 
       <footer className="bg-muted py-10">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 EcoVision. All rights reserved.</p>
+        <div className="container mx-auto px-4 text-center text-sm md:text-base">
+          <p>&copy; 2024 CarbonTrace. All rights reserved.</p>
         </div>
       </footer>
     </div>
