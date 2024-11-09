@@ -2,240 +2,188 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Car, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
-// Replace with your Mapbox token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-const MumbaiCarpooling = () => {
+const MapRoute = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
-    const [activeRouteId, setActiveRouteId] = useState(null);
-    const markersRef = useRef([]);
     const [mapLoaded, setMapLoaded] = useState(false);
+    const [sourceName, setSourceName] = useState('');
+    const [destinationName, setDestinationName] = useState('');
+    const [sourceCoords, setSourceCoords] = useState(null);
+    const [destinationCoords, setDestinationCoords] = useState(null);
+    const sourceMarker = useRef(null);
+    const destinationMarker = useRef(null);
+    const carpoolMarker = useRef(null);
 
-    // Sample routes data
-    const routes = [
-        {
-            id: 1,
-            rider1: {
-                name: "Priya",
-                location: [72.856, 19.017],
-                label: "Dadar"
-            },
-            rider2: {
-                name: "Rahul",
-                location: [72.845, 19.033],
-                label: "Mahim"
-            },
-            destination: {
-                location: [72.868, 19.069],
-                label: "BKC"
-            }
-        },
-        {
-            id: 2,
-            rider1: {
-                name: "Amit",
-                location: [72.915, 19.129],
-                label: "Powai"
-            },
-            rider2: {
-                name: "Sneha",
-                location: [72.902, 19.114],
-                label: "Vikhroli"
-            },
-            destination: {
-                location: [72.847, 19.119],
-                label: "Andheri"
-            }
+    const getCoordinates = async (place) => {
+        try {
+            const response = await fetch(
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(place)}.json?access_token=${mapboxgl.accessToken}`
+            );
+            const data = await response.json();
+            return data.features[0].center;
+        } catch (error) {
+            console.error("Error fetching coordinates:", error);
+            return null;
         }
-    ];
+    };
 
-    // Initialize map
+    const getRoute = async () => {
+        try {
+            const query = await fetch(
+                `https://api.mapbox.com/directions/v5/mapbox/driving/${sourceCoords[0]},${sourceCoords[1]};${destinationCoords[0]},${destinationCoords[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`
+            );
+            const json = await query.json();
+            const data = json.routes[0];
+            return {
+                type: 'Feature',
+                properties: {},
+                geometry: data.geometry
+            };
+        } catch (error) {
+            console.error("Error fetching route:", error);
+            return null;
+        }
+    };
+
     useEffect(() => {
         if (map.current) return;
 
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [72.8777, 19.0760], // Mumbai
-            zoom: 11
+            center: [72.8777, 19.0760], // Default center (Mumbai) before plotting any route
+            zoom: 12
         });
 
-        // Add navigation control
         map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-        // Wait for map to load before adding sources and layers
         map.current.on('load', () => {
-            // Initialize sources and layers for each route
-            routes.forEach(route => {
-                // Add source
-                map.current.addSource(`route-${route.id}`, {
-                    type: 'geojson',
-                    data: {
-                        type: 'Feature',
-                        properties: { active: false },
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                route.rider1.location,
-                                route.rider2.location,
-                                route.destination.location
-                            ]
-                        }
+            map.current.addSource('route', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: []
                     }
-                });
+                }
+            });
 
-                // Add layer
-                map.current.addLayer({
-                    id: `route-${route.id}`,
-                    type: 'line',
-                    source: `route-${route.id}`,
-                    layout: {
-                        'line-join': 'round',
-                        'line-cap': 'round'
-                    },
-                    paint: {
-                        'line-color': '#2563eb',
-                        'line-width': 2,
-                        'line-opacity': 0.4
-                    }
-                });
+            map.current.addLayer({
+                id: 'route',
+                type: 'line',
+                source: 'route',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#2563eb',
+                    'line-width': 4,
+                    'line-opacity': 0.8
+                }
             });
 
             setMapLoaded(true);
         });
 
-        return () => {
-            if (map.current) {
-                map.current.remove();
-            }
-        };
+        return () => map.current?.remove();
     }, []);
 
-    // Update markers and route styles
+    const updateMarkers = (carpoolCoords) => {
+        if (sourceMarker.current) sourceMarker.current.remove();
+        if (destinationMarker.current) destinationMarker.current.remove();
+        if (carpoolMarker.current) carpoolMarker.current.remove();
+
+        sourceMarker.current = new mapboxgl.Marker({ color: '#22c55e' })
+            .setLngLat(sourceCoords)
+            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Start Point</h3></div>'))
+            .addTo(map.current);
+
+        destinationMarker.current = new mapboxgl.Marker({ color: '#ef4444' })
+            .setLngLat(destinationCoords)
+            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Destination</h3></div>'))
+            .addTo(map.current);
+
+        carpoolMarker.current = new mapboxgl.Marker({ color: '#22c55e' })
+            .setLngLat(carpoolCoords)
+            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Carpool Pickup</h3></div>'))
+            .addTo(map.current);
+    };
+
     useEffect(() => {
-        if (!mapLoaded) return;
+        if (!mapLoaded || !sourceCoords || !destinationCoords) return;
 
-        // Clear existing markers
-        markersRef.current.forEach(marker => marker.remove());
-        markersRef.current = [];
+        const displayRoute = async () => {
+            const routeData = await getRoute();
+            if (routeData && map.current.getSource('route')) {
+                map.current.getSource('route').setData(routeData);
 
-        // Update routes and add markers
-        routes.forEach(route => {
-            const isActive = route.id === activeRouteId;
+                const coordinates = routeData.geometry.coordinates;
+                const bounds = coordinates.reduce((bounds, coord) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
-            // Update route style
-            if (map.current.getSource(`route-${route.id}`)) {
-                map.current.setPaintProperty(`route-${route.id}`, 'line-width',
-                    isActive ? 4 : 2
-                );
-                map.current.setPaintProperty(`route-${route.id}`, 'line-opacity',
-                    isActive ? 0.8 : 0.4
-                );
+                map.current.fitBounds(bounds, { padding: 50 });
+
+                const carpoolCoords = coordinates[Math.floor(coordinates.length * 0.1)]; // 10% along the path
+                updateMarkers(carpoolCoords);
             }
+        };
 
-            // Add markers for pickup points
-            const rider1Marker = new mapboxgl.Marker({ color: '#22c55e' })
-                .setLngLat(route.rider1.location)
-                .setPopup(
-                    new mapboxgl.Popup().setHTML(
-                        `<div class="p-2">
-                            <h3 class="font-bold">${route.rider1.label}</h3>
-                            <p>Rider: ${route.rider1.name}</p>
-                        </div>`
-                    )
-                )
-                .addTo(map.current);
+        displayRoute();
+    }, [mapLoaded, sourceCoords, destinationCoords]);
 
-            const rider2Marker = new mapboxgl.Marker({ color: '#22c55e' })
-                .setLngLat(route.rider2.location)
-                .setPopup(
-                    new mapboxgl.Popup().setHTML(
-                        `<div class="p-2">
-                            <h3 class="font-bold">${route.rider2.label}</h3>
-                            <p>Rider: ${route.rider2.name}</p>
-                        </div>`
-                    )
-                )
-                .addTo(map.current);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const sourceLocation = await getCoordinates(sourceName);
+        const destinationLocation = await getCoordinates(destinationName);
 
-            // Add marker for destination
-            const destMarker = new mapboxgl.Marker({ color: '#ef4444' })
-                .setLngLat(route.destination.location)
-                .setPopup(
-                    new mapboxgl.Popup().setHTML(
-                        `<div class="p-2">
-                            <h3 class="font-bold">${route.destination.label}</h3>
-                            <p>Destination</p>
-                        </div>`
-                    )
-                )
-                .addTo(map.current);
-
-            markersRef.current.push(rider1Marker, rider2Marker, destMarker);
-        });
-    }, [activeRouteId, mapLoaded]);
+        if (sourceLocation && destinationLocation) {
+            setSourceCoords(sourceLocation);
+            setDestinationCoords(destinationLocation);
+        } else {
+            console.error("Error fetching coordinates for input locations");
+        }
+    };
 
     return (
         <Card className="w-full max-w-4xl">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <MapPin className="w-6 h-6" />
-                    Mumbai Carpooling Routes
+                    Road Route Map
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="relative">
-                    {/* Map Container */}
-                    <div
-                        ref={mapContainer}
-                        className="w-full h-[500px] rounded-lg mb-4"
+                <form onSubmit={handleSubmit} className="mb-4 flex gap-4">
+                    <input
+                        type="text"
+                        placeholder="Enter Source"
+                        value={sourceName}
+                        onChange={(e) => setSourceName(e.target.value)}
+                        className="p-2 border rounded"
                     />
-
-                    {/* Legend */}
-                    <div className="absolute top-4 right-4 bg-white p-4 rounded-lg shadow-md">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                            <span className="text-sm">Pickup Points</span>
-                        </div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-4 h-4 rounded-full bg-red-500"></div>
-                            <span className="text-sm">Destinations</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-1 bg-blue-600"></div>
-                            <span className="text-sm">Route</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Routes List */}
-                <div className="mt-4 space-y-2">
-                    <h3 className="font-semibold">Available Routes:</h3>
-                    {routes.map((route) => (
-                        <div
-                            key={route.id}
-                            onClick={() => setActiveRouteId(route.id === activeRouteId ? null : route.id)}
-                            className={`p-4 rounded-lg cursor-pointer transition-colors ${activeRouteId === route.id ? 'bg-blue-100' : 'bg-gray-50 hover:bg-gray-100'
-                                }`}
-                        >
-                            <div className="flex items-center gap-2">
-                                <Car className="w-5 h-5" />
-                                <span>
-                                    {route.rider1.label} → {route.rider2.label} → {route.destination.label}
-                                </span>
-                            </div>
-                            <div className="mt-1 text-sm text-gray-600 pl-7">
-                                Riders: {route.rider1.name} and {route.rider2.name}
-                            </div>
-                        </div>
-                    ))}
+                    <input
+                        type="text"
+                        placeholder="Enter Destination"
+                        value={destinationName}
+                        onChange={(e) => setDestinationName(e.target.value)}
+                        className="p-2 border rounded"
+                    />
+                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                        Get Route
+                    </button>
+                </form>
+                <div className="relative">
+                    <div ref={mapContainer} className="w-full h-[500px] rounded-lg mb-4" />
                 </div>
             </CardContent>
         </Card>
     );
 };
 
-export default MumbaiCarpooling;
+export default MapRoute;
