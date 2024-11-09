@@ -48,6 +48,7 @@ const createUser = async (req, res) => {
       energyEfficiency,
       recycling,
       cookingWith,
+      carbonEmission: 50
     });
 
     

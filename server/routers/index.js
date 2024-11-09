@@ -1,5 +1,7 @@
 import userRouter from "./authRouter.js";
+import frinedsRouter from "./friendsRouter.js";
 
 export{
-    userRouter
+    userRouter,
+    frinedsRouter
 }

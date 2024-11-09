@@ -25,10 +25,25 @@ const userSchema = new mongoose.Schema({
   energyEfficiency: { type: Boolean },
   recycling: { type: [String] },
   cookingWith: { type: [String] },
-  carbonEmission: { 
-    type: Number ,   // This is still part of the model but won't be calculated
+  carbonEmission: {
+    type: Number,
     default: null
-}  
+  },
+  friends: {
+    type: [String],
+    ref: 'User',
+    default: []  // Empty array by default
+  },
+  friendRequestsSent: {
+    type: [String],
+    ref: 'User',
+    default: []  // Empty array by default
+  },
+  friendRequestsReceived: {
+    type: [String],
+    ref: 'User',
+    default: []  // Empty array by default
+  }
 });
 
 const User = mongoose.model('User', userSchema);
