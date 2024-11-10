@@ -191,6 +191,100 @@ const Analytics = () => {
             </AlertDescription>
           </Alert>
 
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle>Recommendations</CardTitle>
+                <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-6">
+                  {/* Immediate Actions Column */}
+                  <div className="space-y-4">
+                    {analysisData.recommendations?.immediate_actions?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Immediate Actions
+                        </h3>
+                        {analysisData.recommendations.immediate_actions.map((action, index) => (
+                          <Alert key={index} className="shadow-sm">
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2 text-sm">
+                              {action.action}
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}
+                              >
+                                {action.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription className="text-xs">
+                              {action.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Medium Term Goals */}
+                    {analysisData.recommendations?.medium_term_goals?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Medium Term Goals
+                        </h3>
+                        {analysisData.recommendations.medium_term_goals.map((goal, index) => (
+                          <Alert key={index} className="shadow-sm">
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2 text-sm">
+                              {goal.action}
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}
+                              >
+                                {goal.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription className="text-xs">
+                              {goal.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Long Term Changes Column */}
+                  <div className="space-y-4">
+                    {analysisData.recommendations?.long_term_changes?.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4" />
+                          Long Term Changes
+                        </h3>
+                        {analysisData.recommendations.long_term_changes.map((change, index) => (
+                          <Alert key={index} className="shadow-sm">
+                            <Info className="h-4 w-4" />
+                            <AlertTitle className="flex items-center gap-2 text-sm">
+                              {change.action}
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}
+                              >
+                                {change.impact_level} Impact
+                              </span>
+                            </AlertTitle>
+                            <AlertDescription className="text-xs">
+                              {change.suggestion}
+                            </AlertDescription>
+                          </Alert>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <BellCurvePosition
               mean={analysisData.statistics.populationStats.mean}
@@ -231,229 +325,9 @@ const Analytics = () => {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <StatisticalIndicator
-              value={analysisData.comparisons.grocery.your_value}
-              mean={analysisData.comparisons.grocery.population_mean}
-              stdDev={analysisData.comparisons.grocery.standard_deviations}
-              title="Monthly Grocery Impact"
-              unit="$"
-              icon={ShoppingBag}
-              inverted={true}
-            />
-            <StatisticalIndicator
-              value={analysisData.comparisons.vehicleDistance.your_value}
-              mean={analysisData.comparisons.vehicleDistance.population_mean}
-              stdDev={analysisData.comparisons.vehicleDistance.standard_deviations}
-              title="Vehicle Usage"
-              unit="km"
-              icon={Car}
-              inverted={true}
-            />
-            <StatisticalIndicator
-              value={analysisData.comparisons.wasteBags.your_value}
-              mean={analysisData.comparisons.wasteBags.population_mean}
-              stdDev={analysisData.comparisons.wasteBags.standard_deviations}
-              title="Waste Generation"
-              unit=" bags"
-              icon={Trash2}
-              inverted={true}
-            />
-            <StatisticalIndicator
-              value={analysisData.comparisons.screenTime.your_value}
-              mean={analysisData.comparisons.screenTime.population_mean}
-              stdDev={analysisData.comparisons.screenTime.standard_deviations}
-              title="Screen Time"
-              unit="h"
-              icon={Tv}
-              inverted={true}
-            />
-            <StatisticalIndicator
-              value={analysisData.comparisons.clothingPurchases.your_value}
-              mean={analysisData.comparisons.clothingPurchases.population_mean}
-              stdDev={analysisData.comparisons.clothingPurchases.standard_deviations}
-              title="Clothing Purchases"
-              unit="/mo"
-              icon={ShoppingCart}
-              inverted={true}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Impact Categories Comparison</CardTitle>
-                <CardDescription>Your values vs. population means</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart data={Object.entries(analysisData.comparisons).map(([key, value]) => ({
-                      category: key,
-                      yourValue: value.your_value,
-                      populationMean: value.population_mean,
-                    }))}>
-                      <PolarGrid />
-                      <PolarAngleAxis dataKey="category" />
-                      <PolarRadiusAxis />
-                      <Radar
-                        name="Your Values"
-                        dataKey="yourValue"
-                        stroke="#3b82f6"
-                        fill="#93c5fd"
-                        fillOpacity={0.6}
-                      />
-                      <Radar
-                        name="Population Mean"
-                        dataKey="populationMean"
-                        stroke="#94a3b8"
-                        fill="#e2e8f0"
-                        fillOpacity={0.6}
-                      />
-                      <Legend />
-                      <Tooltip />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Trend Analysis</CardTitle>
-                <CardDescription>Monthly progression of your impact metrics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={[
-                        { month: 'Jan', impact: 1800 },
-                        { month: 'Feb', impact: 1750 },
-                        { month: 'Mar', impact: 1700 },
-                        { month: 'Apr', impact: 1644.69 }
-                      ]}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis
-                        domain={['dataMin - 100', 'dataMax + 100']}
-                        tickFormatter={(value) => `${value.toFixed(0)} CO₂e`}
-                      />
-                      <Tooltip
-                        formatter={(value) => [`${value.toFixed(2)} CO₂e`, "Carbon Impact"]}
-                      />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="impact"
-                        name="Carbon Impact"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                        dot={{ r: 6 }}
-                        activeDot={{ r: 8 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card className="w-full max-w-4xl">
-              <CardHeader>
-                <CardTitle>Recommendations</CardTitle>
-                <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {/* Immediate Actions */}
-                  {analysisData.recommendations?.immediate_actions?.length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Immediate Actions
-                      </h3>
-                      {analysisData.recommendations.immediate_actions.map((action, index) => (
-                        <Alert key={index} className="shadow-sm">
-                          <Info className="h-4 w-4" />
-                          <AlertTitle className="flex items-center gap-2">
-                            {action.action}
-                            <span
-                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}
-                            >
-                              {action.impact_level} Impact
-                            </span>
-                          </AlertTitle>
-                          <AlertDescription>
-                            {action.suggestion}
-                          </AlertDescription>
-                        </Alert>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Medium Term Goals */}
-                  {analysisData.recommendations?.medium_term_goals?.length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        Medium Term Goals
-                      </h3>
-                      {analysisData.recommendations.medium_term_goals.map((goal, index) => (
-                        <Alert key={index} className="shadow-sm">
-                          <Info className="h-4 w-4" />
-                          <AlertTitle className="flex items-center gap-2">
-                            {goal.action}
-                            <span
-                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}
-                            >
-                              {goal.impact_level} Impact
-                            </span>
-                          </AlertTitle>
-                          <AlertDescription>
-                            {goal.suggestion}
-                          </AlertDescription>
-                        </Alert>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Long Term Changes */}
-                  {analysisData.recommendations?.long_term_changes?.length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4" />
-                        Long Term Changes
-                      </h3>
-                      {analysisData.recommendations.long_term_changes.map((change, index) => (
-                        <Alert key={index} className="shadow-sm">
-                          <Info className="h-4 w-4" />
-                          <AlertTitle className="flex items-center gap-2">
-                            {change.action}
-                            <span
-                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}
-                            >
-                              {change.impact_level} Impact
-                            </span>
-                          </AlertTitle>
-                          <AlertDescription>
-                            {change.suggestion}
-                          </AlertDescription>
-                        </Alert>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
         </>
       )}
-    </div>
+    </div >
   );
 };
 

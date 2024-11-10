@@ -100,19 +100,25 @@ const MapRoute = () => {
         if (destinationMarker.current) destinationMarker.current.remove();
         if (carpoolMarker.current) carpoolMarker.current.remove();
 
-        sourceMarker.current = new mapboxgl.Marker({ color: '#22c55e' })
+        sourceMarker.current = new mapboxgl.Marker({ color: '#2563eb' })
             .setLngLat(sourceCoords)
-            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Start Point</h3></div>'))
+            .setPopup(new mapboxgl.Popup().setHTML(
+                '<div class="p-2"><h3 class="font-bold">Your Location</h3></div>'
+            ))
             .addTo(map.current);
 
         destinationMarker.current = new mapboxgl.Marker({ color: '#ef4444' })
             .setLngLat(destinationCoords)
-            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Destination</h3></div>'))
+            .setPopup(new mapboxgl.Popup().setHTML(
+                `<div class="p-2"><h3 class="font-bold">${destinationName}</h3></div>`
+            ))
             .addTo(map.current);
 
         carpoolMarker.current = new mapboxgl.Marker({ color: '#22c55e' })
             .setLngLat(carpoolCoords)
-            .setPopup(new mapboxgl.Popup().setHTML('<div class="p-2"><h3 class="font-bold">Carpool Pickup</h3></div>'))
+            .setPopup(new mapboxgl.Popup().setHTML(
+                '<div class="p-2"><h3 class="font-bold">Soham\'s Location</h3><p class="text-sm text-gray-600">(10 min walk)</p></div>'
+            ))
             .addTo(map.current);
     };
 
@@ -151,38 +157,28 @@ const MapRoute = () => {
     };
 
     return (
-        <Card className="w-full max-w-4xl">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <MapPin className="w-6 h-6" />
-                    Road Route Map
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit} className="mb-4 flex gap-4">
-                    <input
-                        type="text"
-                        placeholder="Enter Source"
-                        value={sourceName}
-                        onChange={(e) => setSourceName(e.target.value)}
-                        className="p-2 border rounded"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Enter Destination"
-                        value={destinationName}
-                        onChange={(e) => setDestinationName(e.target.value)}
-                        className="p-2 border rounded"
-                    />
-                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
-                        Get Route
-                    </button>
-                </form>
-                <div className="relative">
-                    <div ref={mapContainer} className="w-full h-[500px] rounded-lg mb-4" />
-                </div>
-            </CardContent>
-        </Card>
+        <div className="w-screen h-screen relative">
+            <form onSubmit={handleSubmit} className="absolute z-10 p-4 bg-white shadow-lg rounded-lg top-4 left-4">
+                <input
+                    type="text"
+                    placeholder="Enter Source"
+                    value={sourceName}
+                    onChange={(e) => setSourceName(e.target.value)}
+                    className="p-2 border rounded mr-2"
+                />
+                <input
+                    type="text"
+                    placeholder="Enter Destination"
+                    value={destinationName}
+                    onChange={(e) => setDestinationName(e.target.value)}
+                    className="p-2 border rounded mr-2"
+                />
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
+                    Get Route
+                </button>
+            </form>
+            <div ref={mapContainer} className="w-full h-full" />
+        </div>
     );
 };
 
