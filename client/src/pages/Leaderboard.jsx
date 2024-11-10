@@ -40,6 +40,7 @@ const Leaderboard = () => {
           .map((entry, index) => ({
             place: index + 1,
             name: entry.fullName,
+            imageURL: entry.imageURL,
             carbonEmission: entry.carbonEmission
           }));
 
@@ -50,6 +51,7 @@ const Leaderboard = () => {
           .map((entry, index) => ({
             place: index + 1,
             name: entry.name,
+            imageURL: entry.imageURL,
             carbonEmission: entry.carbonEmission
           }));
 
@@ -142,7 +144,7 @@ const Leaderboard = () => {
               } border-2 border-green-600 rounded-lg px-4 py-2 transition-all hover:bg-green-600 hover:text-white`}
             onClick={() => handleLeaderboardTypeChange('appWide')}
           >
-            App-Wide Leaderboard
+            Global Leaderboard
           </button>
           <button
             className={`${leaderboardType === 'friends' ? 'bg-green-200 text-black' : 'bg-white dark:bg-black text-black dark:text-white'
@@ -223,10 +225,14 @@ const Leaderboard = () => {
             </div>
 
             {/* Player Name and Ranking */}
-            <div className="flex flex-col items-start space-y-1">
-              <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">{player.name}</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">Rank {player.place}</p>
+            <div className="flex items-center space-x-4">
+              <img src={player.imageURL} alt={`${player.name}'s avatar`} className="w-10 h-10 rounded-full" />
+              <div>
+                <h2 className="text-xl font-extrabold text-gray-800 dark:text-white">{player.name}</h2>
+                <p className="text-md text-gray-600 dark:text-gray-400">Rank {player.place}</p>
+              </div>
             </div>
+
 
             {/* Player Details */}
             <div className="mt-4 space-y-2">
@@ -277,8 +283,15 @@ const Leaderboard = () => {
                   onClick={() => setSelectedPlayer(player)}
                 >
                   <td className="py-3 px-6 border-b text-left text-gray-700 dark:text-gray-300">{player.place}</td> {/* Add text-center to this column */}
-                  <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
-                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td> {/* Add text-center to this column */}
+                  <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">
+                    <span className="flex items-center">
+                      {player.name}
+                      <img src={player.imageURL} alt={`${player.name}'s avatar`} className="w-8 h-8 rounded-full ml-2" />
+                    </span>
+                  </td>
+                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">
+                    {player.carbonEmission}
+                  </td> {/* Add text-center to this column */}
                 </tr>
               ))}
             </tbody>
@@ -301,7 +314,7 @@ const Leaderboard = () => {
               {/* CO2 Emissions */}
               <div className="flex flex-col items-center mt-4">
                 <p className="text-gray-700 dark:text-gray-300">
-                  <strong>CO₂ Emissions:</strong> {selectedPlayer.carbonEmission}
+                  <strong>Carbon Emissions:</strong> {selectedPlayer.carbonEmission}
                 </p>
               </div>
 
@@ -329,26 +342,26 @@ const Leaderboard = () => {
             <DialogHeader>
               <DialogTitle className="text-xl font-bold text-gray-800 dark:text-white">{selectedPlayer.name}'s Profile</DialogTitle>
               <DialogDescription className="text-sm text-gray-500 dark:text-gray-400">
-                Detailed profile of {selectedPlayer.name}.
+                {/* Detailed profile of {selectedPlayer.name}. */}
               </DialogDescription>
             </DialogHeader>
 
             {/* Profile Image */}
             <div className="flex flex-col items-center space-y-4 mt-4">
               <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <img src="/path-to-placeholder-image.jpg" alt={`${selectedPlayer.name} profile`} className="object-cover w-full h-full" />
+                <img src={selectedPlayer.imageURL} alt={`${selectedPlayer.name} profile`} className="object-cover w-full h-full" />
               </div>
 
               <div className="text-center">
                 <p className="text-gray-700 dark:text-gray-300">
-                  <strong>CO2 Reduction:</strong> {selectedPlayer.co2Reduction}
+                  <strong>Carbon Emission :</strong> {selectedPlayer.carbonEmission}
                 </p>
-                <p className="text-gray-700 dark:text-gray-300">
+                {/* <p className="text-gray-700 dark:text-gray-300">
                   <strong>Practices:</strong> {selectedPlayer.practices}
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">
                   <strong>Impact Score:</strong> {selectedPlayer.impactScore}
-                </p>
+                </p> */}
               </div>
             </div>
 
