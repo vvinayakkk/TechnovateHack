@@ -17,6 +17,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useUser } from "@clerk/clerk-react";
 import axios from 'axios';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const DJANGO_URL = import.meta.env.VITE_DJANGO_URL;
+
 // Enhanced statistics card with animations
 const StatCard = ({ title, value, subtitle, icon: Icon, trend }) => (
   <motion.div
@@ -75,19 +78,20 @@ const radarData = [
 export default function Dashboard() {
   const { user } = useUser();
   const userID = user?.id;
+  console.log(user);
   console.log(userID);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.post(`http://localhost:3000/user/get`, {
+        const response = await axios.post(`${SERVER_URL}/user/get`, {
           userID: userID
         });
-        const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
+        const response2 = await axios.post(`${DJANGO_URL}/api/analyze-carbon-footprint/`, {
           ...response.data.user
         })
         localStorage.setItem('MLData', JSON.stringify(response2.data));
-        const response3 = await axios.post(`http://localhost:3000/user/get`, {
+        const response3 = await axios.post(`${SERVER_URL}/user/get`, {
           userID: userID
         });
         response3.data.user.fullName = user.fullName;
@@ -115,7 +119,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, MapPin, Calendar, DollarSign, Leaf, Car, Train, Bus, Globe, CalendarDays } from 'lucide-react';
+import { Search, MapPin, Calendar, DollarSign, Leaf, Car, Train, Bus, Globe, CalendarDays, Loader2 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {  toast } from 'sonner';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUser } from '@clerk/clerk-react';
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 // Components/CarbonScore.jsx
 const CarbonScore = ({ score }) => {
@@ -15,11 +18,10 @@ const CarbonScore = ({ score }) => {
       {[...Array(maxLeaves)].map((_, i) => (
         <Leaf
           key={i}
-          className={`w-4 h-4 ${
-            i < score 
-              ? 'text-emerald-500' 
-              : 'text-gray-300 dark:text-gray-600'
-          }`}
+          className={`w-4 h-4 ${i < score
+            ? 'text-emerald-500'
+            : 'text-gray-300 dark:text-gray-600'
+            }`}
         />
       ))}
     </div>
@@ -46,8 +48,8 @@ const EventCard = ({ event, onClick, isDarkMode }) => {
       className={`
         hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer
         transform hover:-translate-y-1
-        ${isEcoEvent 
-          ? 'border-2 border-emerald-500 hover:border-emerald-400' 
+        ${isEcoEvent
+          ? 'border-2 border-emerald-500 hover:border-emerald-400'
           : 'border-2 border-gray-300 hover:border-gray-400'}
         ${isDarkMode ? 'bg-slate-800/90 text-white' : 'bg-white text-black'}
       `}
@@ -87,7 +89,7 @@ const EventCard = ({ event, onClick, isDarkMode }) => {
 };
 
 // Components/EventModal.jsx
-const EventModal = ({ event, onClose, onRegister }) => {
+const EventModal = ({ event, onClose, onRegister, loading }) => {
   const isEcoEvent = event.isEcoFriendly;
 
   return (
@@ -105,8 +107,8 @@ const EventModal = ({ event, onClose, onRegister }) => {
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: "spring", duration: 0.5 }}
           className={`p-8 rounded-lg w-11/12 sm:w-3/4 md:w-1/2 max-w-3xl 
-            ${isEcoEvent 
-              ? 'bg-emerald-900/95 text-white' 
+            ${isEcoEvent
+              ? 'bg-emerald-900/95 text-white'
               : 'bg-slate-900/95 text-white'}`}
           onClick={e => e.stopPropagation()}
         >
@@ -129,7 +131,7 @@ const EventModal = ({ event, onClose, onRegister }) => {
 
           <h3 className="text-2xl font-semibold mb-2">{event.title}</h3>
           <p className="text-sm mb-4">{event.description}</p>
-          
+
           <div className="space-y-3 mb-6">
             <div className="flex items-center text-sm">
               <MapPin className={`w-4 h-4 mr-2 ${isEcoEvent ? 'text-emerald-500' : 'text-gray-400'}`} />
@@ -173,24 +175,26 @@ const EventModal = ({ event, onClose, onRegister }) => {
           )}
 
           <div className="flex space-x-4">
-            <Button 
+            <Button
               onClick={() => onRegister(event._id)}
-              className={`flex-1 ${
-                isEcoEvent 
-                  ? 'bg-emerald-500 hover:bg-emerald-600' 
-                  : 'bg-gray-500 hover:bg-gray-600'
-              } text-white`}
+              className={`flex-1 ${isEcoEvent
+                ? 'bg-emerald-500 hover:bg-emerald-600'
+                : 'bg-gray-500 hover:bg-gray-600'
+                } text-white`}
+              disabled={loading}
             >
-              Register Now
+              {loading ? <>
+                <Loader2 className="animate-spin" />
+                <p>Please wait</p>
+              </> : <p>Register Now</p>}
             </Button>
-            <Button 
-              onClick={onClose} 
-              variant="outline" 
-              className={`flex-1 ${
-                isEcoEvent 
-                  ? 'border-emerald-500 text-emerald-500 hover:bg-emerald-50' 
-                  : 'border-gray-500 text-gray-500 hover:bg-gray-50'
-              }`}
+            <Button
+              onClick={onClose}
+              variant="outline"
+              className={`flex-1 ${isEcoEvent
+                ? 'border-emerald-500 text-emerald-500 hover:bg-emerald-50'
+                : 'border-gray-500 text-gray-500 hover:bg-gray-50'
+                }`}
             >
               Close
             </Button>
@@ -203,28 +207,31 @@ const EventModal = ({ event, onClose, onRegister }) => {
 
 // Main EventPage component
 export default function EventPage() {
-  const [events, setEvents] = useState([]); 
+  const { user } = useUser();
+  const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [filter, setFilter] = useState('all'); // 'all', 'eco', 'standard'
+  const [loading, setLoading] = useState(false);
+  const userID = user?.id;
 
   useEffect(() => {
-    axios.get('http://localhost:3000/event/get-events')
+    axios.get(`${SERVER_URL}/event/get-events`)
       .then((response) => {
         setEvents(response.data.events);
       })
       .catch((error) => {
         console.error("Error fetching events:", error);
-        setEvents([]); 
+        setEvents([]);
       });
   }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm); 
-    }, 500); 
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
@@ -248,10 +255,23 @@ export default function EventPage() {
     setSelectedEvent(null);
   };
 
-  const handleRegister = (eventId) => {
+  const handleRegister = async (eventId) => {
     const event = events.find(e => e._id === eventId);
+    setLoading(true);
+    const response = await axios.post('${SERVER_URL}/event/register', {
+      eventID: event.eventID,
+      userID: userID,
+      email: user.primaryEmailAddress.emailAddress
+    });
+
+    if (response.status !== 200) {
+      setLoading(false);
+      return toast.error(`Failed to register for the event. Please try again later.`);
+    }
+
+    setLoading(false);
     toast.success(`Successfully registered for ${event.title}!`, {
-      description: event.isEcoFriendly 
+      description: event.isEcoFriendly
         ? 'Thank you for joining this carbon-conscious event!'
         : 'Thank you for registering!'
     });
@@ -308,7 +328,7 @@ export default function EventPage() {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -335,6 +355,7 @@ export default function EventPage() {
           event={selectedEvent}
           onClose={closeModal}
           onRegister={handleRegister}
+          loading={loading}
         />
       )}
     </div>

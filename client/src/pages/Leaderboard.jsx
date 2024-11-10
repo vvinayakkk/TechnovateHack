@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { useUser } from '@clerk/clerk-react';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
 const Leaderboard = () => {
   const [view, setView] = useState('24h');
   const [leaderboardType, setLeaderboardType] = useState('appWide');
@@ -25,7 +27,7 @@ const Leaderboard = () => {
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/user/leaderboard');
+        const response = await axios.get(`${SERVER_URL}/user/leaderboard`);
 
         const leaderboardData = response.data.users;
 

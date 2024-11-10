@@ -3,6 +3,8 @@ import { useUser } from '@clerk/clerk-react';
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
 const UserDataInput = () => {
   // const navigate = useNavigate();
   const { isSignedIn, isLoaded, user } = useUser();
@@ -123,7 +125,7 @@ const UserDataInput = () => {
     console.log('Submitting form:', orderedData);
 
     try {
-      const response = await axios.post('http://localhost:3000/user/create', orderedData);
+      const response = await axios.post(`${SERVER_URL}/user/create`, orderedData);
       console.log('Form submitted successfully:', response.data);
       window.location.href = '/dashboard';  
     } catch (error) {

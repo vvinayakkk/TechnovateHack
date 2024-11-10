@@ -7,6 +7,8 @@ import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { Activity, ShoppingBag, Car, Trash2, Tv, ShoppingCart, TrendingDown, TrendingUp, AlertTriangle, CheckCircle, Info, Clock, Calendar } from 'lucide-react';
 import axios from 'axios';
 
+const DJANGO_URL = import.meta.env.VITE_DJANGO_URL;
+
 const Analytics = () => {
   const [analysisData, setAnalysisData] = useState(JSON.parse(localStorage.getItem('MLData')));
 
@@ -35,7 +37,7 @@ const Analytics = () => {
   //   // Simulating API call with sample data
   //   const sampleAnalysis = JSON.parse(localStorage.getItem('user'));
   //   try {
-  //     const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
+  //     const response2 = await axios.post(`${DJANGO_URL}/api/analyze-carbon-footprint/`, {
   //       ...sampleAnalysis
   //     })
   //     console.log(response2.data);
