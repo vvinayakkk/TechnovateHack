@@ -89,34 +89,26 @@ export default function Dashboard() {
         const response = await axios.post(`${SERVER_URL}/user/get`, {
           userID: userID
         });
+        console.log("Respose 1" + response.data);
         const response2 = await axios.post(`${DJANGO_URL}/api/analyze-carbon-footprint/`, {
           ...response.data.user
-        });
-        
+        })
+        console.log("Response 2" + response2.data);
         localStorage.setItem('MLData', JSON.stringify(response2.data));
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        setUserData(response.data.user);
         setMLData(response2.data);
+        const response3 = await axios.post(`${SERVER_URL}/user/get`, {
+          userID: userID
+        });
+        localStorage.setItem('user', JSON.stringify(response3.data.user));
+        setUserData(response3.data.user);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
     fetchUserData();
-  }, [userID]);
-
-  useEffect(() => {
-    const storedUserData = localStorage.getItem('user');
-    const storedMLData = localStorage.getItem('MLData');
-
-    if (storedUserData && storedMLData) {
-      setUserData(JSON.parse(storedUserData));
-      setMLData(JSON.parse(storedMLData));
-    }
-
-    const timer = setTimeout(() => setAnimationComplete(true), 1000);
-    return () => clearTimeout(timer);
   }, []);
+
 
   return (
     <div className="min-h-screen p-8">
