@@ -4,53 +4,66 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Leaf, ShoppingCart, Search, TreePine, Droplets, 
-  Factory, ArrowDownIcon, Recycle, Timer, DollarSign 
+import {
+  Leaf, ShoppingCart, Search, TreePine, Droplets,
+  Factory, Recycle, Timer, DollarSign
 } from 'lucide-react';
-import { 
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  BarChart, Bar, Legend, CartesianGrid, PieChart, Pie, Cell 
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Legend, CartesianGrid
 } from 'recharts';
+import Spinner from '@/components/Spinner';
+import axios from 'axios';
+
+const DJANGO_URL = import.meta.env.VITE_DJANGO_URL;
+
+const getRandomCostPerUse = () => (Math.random() * (1.5 - 0.05) + 0.05).toFixed(2); // Random cost between 0.05 and 1.5
+const getRandomLifespanMonths = () => (Math.random() * (36 - 6) + 6).toFixed(2); // Random lifespan between 6 and 36 months
+const getRandomWaterUsage = () => (Math.random() * (50 - 5) + 5).toFixed(2); // Random water usage between 5 and 50
+
+const addRandomAttributes = (products, recyclable) => {
+  return products.map(product => ({
+    ...product,
+    costPerUse: getRandomCostPerUse(),
+    lifespanMonths: getRandomLifespanMonths(),
+    recyclable,
+    waterUsage: getRandomWaterUsage(),
+  }));
+}
+
 
 const ProductComparison = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('monthly');
+  const [loading, setLoading] = useState(false);
 
-  // Enhanced sample data with more detailed metrics
-  const regularProducts = [
+  const [regularProducts, setRegularProducts] = useState([
     {
       title: "250 9 oz Clear Disposable Plastic Cups",
       price: "$25.99",
       rating: "4.6 out of 5 stars",
       image_url: "/api/placeholder/320/200",
       product_url: "https://example.com/product1",
-      yearlyImpact: 500,
       costPerUse: 0.10,
       lifespanMonths: 0.25,
       recyclable: "Not recyclable",
       waterUsage: 13
-    },
-    // ... other regular products
-  ];
+    }
+  ]);
 
-  const greenProducts = [
+  const [greenProducts, setGreenProducts] = useState([
     {
       title: "Biodegradable Paper Cups - 250 Count",
       price: "$28.99",
       rating: "4.4 out of 5 stars",
       image_url: "/api/placeholder/320/200",
       product_url: "https://example.com/green-product1",
-      yearlyImpact: 50,
       costPerUse: 0.12,
       lifespanMonths: 6,
       recyclable: "Fully compostable",
       waterUsage: 3
-    },
-    // ... other green products
-  ];
+    }
+  ]);
 
-  // Enhanced impact data for multiple metrics
   const impactData = [
     { month: 'Jan', regular: 100, green: 10, water_regular: 130, water_green: 30 },
     { month: 'Feb', regular: 200, green: 20, water_regular: 260, water_green: 60 },
@@ -60,11 +73,23 @@ const ProductComparison = () => {
     { month: 'Jun', regular: 600, green: 60, water_regular: 780, water_green: 180 },
   ];
 
-  // Comparison metrics for the pie charts
-  const wastePieData = [
-    { name: 'Regular', value: 95, color: '#ff7c43' },
-    { name: 'Eco-Friendly', value: 5, color: '#2ec4b6' }
-  ];
+
+  const handleSearch = async () => {
+    setLoading(true);
+
+    const response1 = await axios.get(`${DJANGO_URL}/api/top-products/?query=${searchQuery + ' plastic synthetic'}`)
+    setRegularProducts(addRandomAttributes(response1.data.products, "Not recyclable"))
+    const response2 = await axios.get(`${DJANGO_URL}/api/top-products/?query=${searchQuery + ' eco-friendly sustainable green biodegradable'}`)
+    setGreenProducts(addRandomAttributes(response2.data.products, "Recyclable"))
+
+    setLoading(false);
+  };
+
+  const handleKeyDown = async (e) => {
+    if (e.key === 'Enter') {
+      await handleSearch();
+    }
+  };
 
   const ImpactMetricsCard = () => (
     <div className="space-y-6">
@@ -105,20 +130,8 @@ const ProductComparison = () => {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="regular" 
-                      stroke="#ff7c43" 
-                      name="Regular Products" 
-                      strokeWidth={2}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="green" 
-                      stroke="#2ec4b6" 
-                      name="Eco-Friendly" 
-                      strokeWidth={2}
-                    />
+                    <Line type="monotone" dataKey="regular" stroke="#ff7c43" name="Regular Products" strokeWidth={2} />
+                    <Line type="monotone" dataKey="green" stroke="#2ec4b6" name="Eco-Friendly" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -154,33 +167,21 @@ const ProductComparison = () => {
   );
 
   const ProductCard = ({ product, isGreen }) => (
-    <Card className={`w-full transform transition-all duration-200 hover:scale-105 ${
-      isGreen ? 'hover:shadow-green-200' : 'hover:shadow-blue-200'
-    } hover:shadow-lg`}>
+    <Card className={`w-full transform transition-all duration-200 hover:scale-105 ${isGreen ? 'hover:shadow-green-200' : 'hover:shadow-blue-200'} hover:shadow-lg`}>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg truncate">{product.title}</CardTitle>
-          {isGreen && (
-            <Badge className="bg-green-500">
-              <Leaf className="w-4 h-4 mr-1" />
-              Eco-Friendly
-            </Badge>
-          )}
         </div>
       </CardHeader>
       <CardContent>
-        <img
-          src={product.image_url}
-          alt={product.title}
-          className="w-full h-48 object-cover rounded-md mb-4"
-        />
-        
+        <img src={product.image_url} alt={product.title} className="w-full h-48 object-cover rounded-md mb-4" />
+
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="font-bold text-xl">{product.price}</span>
             <span className="text-sm text-gray-600">{product.rating}</span>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
             <div className="flex items-center space-x-2 text-sm">
               <Timer className="w-4 h-4 text-blue-500" />
@@ -195,29 +196,31 @@ const ProductComparison = () => {
               <span>{product.recyclable}</span>
             </div>
             <div className="flex items-center space-x-2 text-sm">
-              <Droplets className="w-4 h-4 text-blue-500" />
-              <span>{product.waterUsage}L/100 units</span>
+              <Droplets className="w-4 h-4 text-blue-600" />
+              <span>Water: {product.waterUsage} L</span>
             </div>
           </div>
 
-          <Button 
-            className={`w-full ${isGreen ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}`}
-            onClick={() => window.open(product.product_url, '_blank')}
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Buy Now
-          </Button>
+          <div className='flex jus'>
+            <Button variant="secondary" onClick={
+              () => {
+                window.open(product.product_url, '_blank');
+              }
+            }>
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Buy Now
+            </Button>
+
+            {isGreen && (
+              <Badge className="bg-green-500">
+                <Leaf className="w-4 h-4 mr-1" />
+                Eco-Friendly
+              </Badge>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
-  );
-
-  const filteredRegularProducts = regularProducts.filter(product =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredGreenProducts = greenProducts.filter(product =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -233,33 +236,40 @@ const ProductComparison = () => {
               className="pl-10 pr-4 py-2 w-full"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           </div>
         </div>
 
-        <ImpactMetricsCard />
+        {!searchQuery ? (
+          <ImpactMetricsCard />
+        ) : loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner className="text-green-600" />
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold flex items-center">
+                <Factory className="w-5 h-5 mr-2" />
+                Standard Products
+              </h3>
+              {regularProducts.map((product, index) => (
+                <ProductCard key={`regular-${index}`} product={product} isGreen={false} />
+              ))}
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold flex items-center">
-              <Factory className="w-5 h-5 mr-2" />
-              Standard Products
-            </h3>
-            {filteredRegularProducts.map((product, index) => (
-              <ProductCard key={`regular-${index}`} product={product} isGreen={false} />
-            ))}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold flex items-center text-green-600">
+                <Leaf className="w-5 h-5 mr-2" />
+                Eco-Friendly Alternatives
+              </h3>
+              {greenProducts.map((product, index) => (
+                <ProductCard key={`green-${index}`} product={product} isGreen={true} />
+              ))}
+            </div>
           </div>
-          
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold flex items-center text-green-600">
-              <Leaf className="w-5 h-5 mr-2" />
-              Eco-Friendly Alternatives
-            </h3>
-            {filteredGreenProducts.map((product, index) => (
-              <ProductCard key={`green-${index}`} product={product} isGreen={true} />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
