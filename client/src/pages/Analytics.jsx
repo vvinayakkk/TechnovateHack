@@ -8,7 +8,7 @@ import { Activity, ShoppingBag, Car, Trash2, Tv, ShoppingCart, TrendingDown, Tre
 import axios from 'axios';
 
 const Analytics = () => {
-  const [analysisData, setAnalysisData] = useState(null);
+  const [analysisData, setAnalysisData] = useState(JSON.parse(localStorage.getItem('MLData')));
 
   // Approximation of the error function (erf)
   const erf = (x) => {
@@ -31,71 +31,19 @@ const Analytics = () => {
     return sign * y;
   };
 
-  const calculateAnalysis = async () => {
-    // Simulating API call with sample data
-    const sampleAnalysis = JSON.parse(localStorage.getItem('user'));
-    try {
-      const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
-        ...sampleAnalysis
-      })
-      console.log(response2.data);
-      setAnalysisData(response2.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-  // const sampleAnalysis = {
-  //   prediction: 1644.69,
-  //   statistics: {
-  //     percentileRank: 30.28,
-  //     comparisonToMean: -27.52,
-  //     standardDeviationsFromMean: -0.61,
-  //     emissionCategory: "Low",
-  //     populationStats: {
-  //       mean: 2269.15,
-  //       std_dev: 1017.62,
-  //       sample_size: 10000
-  //     }
-  //   },
-  //   comparisons: {
-  //     grocery: {
-  //       your_value: 450,
-  //       population_mean: 173.88,
-  //       difference_from_mean: 276.12,
-  //       percentile_rank: 100,
-  //       standard_deviations: 3.82
-  //     },
-  //     vehicleDistance: {
-  //       your_value: 800,
-  //       population_mean: 2031.49,
-  //       difference_from_mean: -1231.49,
-  //       percentile_rank: 49.62,
-  //       standard_deviations: -0.44
-  //     },
-  //     wasteBags: {
-  //       your_value: 3,
-  //       population_mean: 4.02,
-  //       difference_from_mean: -1.02,
-  //       percentile_rank: 27.87,
-  //       standard_deviations: -0.51
-  //     },
-  //     screenTime: {
-  //       your_value: 4,
-  //       population_mean: 12.14,
-  //       difference_from_mean: -8.14,
-  //       percentile_rank: 15.03,
-  //       standard_deviations: -1.15
-  //     },
-  //     clothingPurchases: {
-  //       your_value: 3,
-  //       population_mean: 25.11,
-  //       difference_from_mean: -22.11,
-  //       percentile_rank: 6,
-  //       standard_deviations: -1.50
-  //     }
+  // const calculateAnalysis = async () => {
+  //   // Simulating API call with sample data
+  //   const sampleAnalysis = JSON.parse(localStorage.getItem('user'));
+  //   try {
+  //     const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
+  //       ...sampleAnalysis
+  //     })
+  //     console.log(response2.data);
+  //     setAnalysisData(response2.data);
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
   //   }
   // };
-  // setAnalysisData(sampleAnalysis);
 
   const getZScoreDescription = (stdDev) => {
     const abs = Math.abs(stdDev);
@@ -230,12 +178,12 @@ const Analytics = () => {
           <h1 className="text-3xl font-bold">Carbon Footprint Analytics</h1>
           <p className="text-gray-500">Detailed analysis of your environmental impact</p>
         </div>
-        <Button
+        {/* <Button
           onClick={calculateAnalysis}
           className="bg-blue-500 hover:bg-blue-600"
         >
           Calculate Impact
-        </Button>
+        </Button> */}
       </div>
 
       {analysisData && (
@@ -426,87 +374,87 @@ const Analytics = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card className="w-full max-w-4xl">
-      <CardHeader>
-        <CardTitle>Recommendations</CardTitle>
-        <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {/* Immediate Actions */}
-          {analysisData.recommendations.immediateActions?.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                Immediate Actions
-              </h3>
-              {analysisData.recommendations.immediateActions.map((action, index) => (
-                <Alert key={index} className="shadow-sm">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle className="flex items-center gap-2">
-                    {action.action}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}>
-                      {action.impact_level} Impact
-                    </span>
-                  </AlertTitle>
-                  <AlertDescription>
-                    {action.suggestion}
-                  </AlertDescription>
-                </Alert>
-              ))}
-            </div>
-          )}
+            <Card className="w-full max-w-4xl">
+              <CardHeader>
+                <CardTitle>Recommendations</CardTitle>
+                <CardDescription>Suggested actions to reduce your carbon footprint</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Immediate Actions */}
+                  {analysisData.recommendations.immediateActions?.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Immediate Actions
+                      </h3>
+                      {analysisData.recommendations.immediateActions.map((action, index) => (
+                        <Alert key={index} className="shadow-sm">
+                          <Info className="h-4 w-4" />
+                          <AlertTitle className="flex items-center gap-2">
+                            {action.action}
+                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}>
+                              {action.impact_level} Impact
+                            </span>
+                          </AlertTitle>
+                          <AlertDescription>
+                            {action.suggestion}
+                          </AlertDescription>
+                        </Alert>
+                      ))}
+                    </div>
+                  )}
 
-          {/* Medium Term Goals */}
-          {analysisData.recommendations.mediumTermGoals?.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Medium Term Goals
-              </h3>
-              {analysisData.recommendations.mediumTermGoals.map((goal, index) => (
-                <Alert key={index} className="shadow-sm">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle className="flex items-center gap-2">
-                    {goal.action}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}>
-                      {goal.impact_level} Impact
-                    </span>
-                  </AlertTitle>
-                  <AlertDescription>
-                    {goal.suggestion}
-                  </AlertDescription>
-                </Alert>
-              ))}
-            </div>
-          )}
+                  {/* Medium Term Goals */}
+                  {analysisData.recommendations.mediumTermGoals?.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Medium Term Goals
+                      </h3>
+                      {analysisData.recommendations.mediumTermGoals.map((goal, index) => (
+                        <Alert key={index} className="shadow-sm">
+                          <Info className="h-4 w-4" />
+                          <AlertTitle className="flex items-center gap-2">
+                            {goal.action}
+                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}>
+                              {goal.impact_level} Impact
+                            </span>
+                          </AlertTitle>
+                          <AlertDescription>
+                            {goal.suggestion}
+                          </AlertDescription>
+                        </Alert>
+                      ))}
+                    </div>
+                  )}
 
-          {/* Long Term Changes */}
-          {analysisData.recommendations.longTermChanges?.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Long Term Changes
-              </h3>
-              {analysisData.recommendations.longTermChanges.map((change, index) => (
-                <Alert key={index} className="shadow-sm">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle className="flex items-center gap-2">
-                    {change.action}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}>
-                      {change.impact_level} Impact
-                    </span>
-                  </AlertTitle>
-                  <AlertDescription>
-                    {change.suggestion}
-                  </AlertDescription>
-                </Alert>
-              ))}
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+                  {/* Long Term Changes */}
+                  {analysisData.recommendations.longTermChanges?.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
+                        Long Term Changes
+                      </h3>
+                      {analysisData.recommendations.longTermChanges.map((change, index) => (
+                        <Alert key={index} className="shadow-sm">
+                          <Info className="h-4 w-4" />
+                          <AlertTitle className="flex items-center gap-2">
+                            {change.action}
+                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}>
+                              {change.impact_level} Impact
+                            </span>
+                          </AlertTitle>
+                          <AlertDescription>
+                            {change.suggestion}
+                          </AlertDescription>
+                        </Alert>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </>
       )}

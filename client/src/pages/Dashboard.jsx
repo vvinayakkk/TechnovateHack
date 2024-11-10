@@ -83,13 +83,15 @@ export default function Dashboard() {
         const response = await axios.post(`http://localhost:3000/user/get`, {
           userID: userID
         });
-        console.log(response.data); // Print the response data
-        console.log(response.data.user); // Print the response data
-        localStorage.setItem('user', JSON.stringify(response.data.user));
         const response2 = await axios.post(`http://192.168.137.37:8000/api/analyze-carbon-footprint/`, {
           ...response.data.user
         })
-        console.log(response2.data);
+        localStorage.setItem('MLData', JSON.stringify(response2.data));
+        const response3 = await axios.post(`http://localhost:3000/user/get`, {
+          userID: userID
+        });
+        response3.data.user.fullName = user.fullName;
+        localStorage.setItem('user', JSON.stringify(response3.data.user));
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
