@@ -160,7 +160,7 @@ const MetamaskForm = ({ amount, currency }) => {
       <h2 className="text-black">{userAccount ? "✅ Connected" : "❌ Not Connected"}</h2>
       <DrawerContent>
         {userAccount ? (
-          <div className="mx-auto w-full max-w-sm">
+          <div className="mx-auto w-full max-w-sm bg-white">
             <DrawerHeader>
               <DrawerTitle>Send a Transaction</DrawerTitle>
               <DrawerDescription>On the Sepolia Testnet</DrawerDescription>

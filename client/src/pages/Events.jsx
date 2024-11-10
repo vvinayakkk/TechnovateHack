@@ -258,7 +258,7 @@ export default function EventPage() {
   const handleRegister = async (eventId) => {
     const event = events.find(e => e._id === eventId);
     setLoading(true);
-    const response = await axios.post('${SERVER_URL}/event/register', {
+    const response = await axios.post(`${SERVER_URL}/event/register`, {
       eventID: event.eventID,
       userID: userID,
       email: user.primaryEmailAddress.emailAddress
