@@ -277,7 +277,7 @@ const Leaderboard = () => {
         } hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
         onClick={() => setSelectedPlayer(player)}
       >
-        <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td> {/* Add text-center to this column */}
+        <td className="py-3 px-6 border-b text-left text-gray-700 dark:text-gray-300">{player.place}</td> {/* Add text-center to this column */}
         <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
         <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td> {/* Add text-center to this column */}
       </tr>
