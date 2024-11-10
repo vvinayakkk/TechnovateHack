@@ -1,8 +1,10 @@
 import { useUser } from '@clerk/clerk-react';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserDataInput = () => {
+  // const navigate = useNavigate();
   const { isSignedIn, isLoaded, user } = useUser();
 
   if (!isSignedIn) {
@@ -123,6 +125,7 @@ const UserDataInput = () => {
     try {
       const response = await axios.post('http://localhost:3000/user/create', orderedData);
       console.log('Form submitted successfully:', response.data);
+      window.location.href = '/dashboard';  
     } catch (error) {
       console.error('Error submitting form:', error);
     }
