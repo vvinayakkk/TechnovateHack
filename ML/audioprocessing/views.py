@@ -251,7 +251,7 @@ class AudioTranscriptionView(APIView):
             audio_path = self._save_audio_file(audio_file)
             wav_path = self._convert_to_wav(audio_path)
             results = self._transcribe_audio(wav_path)
-            
+            print("Results:",results)
             # Cleanup
             os.remove(wav_path)
             
@@ -262,3 +262,23 @@ class AudioTranscriptionView(APIView):
                 {'error': f'Error processing audio file: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+from rest_framework.decorators import api_view   
+from django.http import JsonResponse
+from langchain.schema import AIMessage
+# Simple chat route for input-output
+@api_view(['POST'])
+def chat(request):
+    question = request.data.get('question')
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
+
+    # Simple prompt for chat model
+    prompt = f"Question: {question}"
+    messages = [{"role": "user", "content": prompt}]
+
+    try:
+        response = model.invoke(messages)
+        response_text = response.content if isinstance(response, AIMessage) else str(response)
+        return JsonResponse({'answer': response_text})
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+

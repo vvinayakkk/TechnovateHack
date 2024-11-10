@@ -17,7 +17,9 @@
 
 from django.urls import path
 from .views import AudioTranscriptionView
+from .views import chat
 
 urlpatterns = [
     path('transcribe/', AudioTranscriptionView.as_view(), name='transcribe-audio'),
+    path('chat/', chat, name='chat'),
 ]
