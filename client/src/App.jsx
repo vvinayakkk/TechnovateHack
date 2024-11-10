@@ -52,7 +52,7 @@ const App = () => {
         {/* Routes without Layout */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<CustomSignUp signUpForceRedirectUrl='/moredetails' />} />
-        <Route path="/signin" element={<CustomSignIn signInForceRedirectUrl='/moredetails' />} />
+        <Route path="/signin" element={<CustomSignIn signInForceRedirectUrl='/dashboard' />} />
         <Route path="/moredetails" element={<UserDataInput />} />
 
         {/* Routes with Layout */}

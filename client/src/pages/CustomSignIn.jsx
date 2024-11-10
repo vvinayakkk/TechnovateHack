@@ -67,10 +67,10 @@ export default function CustomSignIn() {
         </svg>
         <span className="text-green-800 mt-2">Save the Planet</span>
       </motion.div>
-    <div className='flex justify-center items-center w-full h-screen'>
-      <SignIn forceRedirectUrl='/moredetails' />
+      <div className='flex justify-center items-center w-full h-screen'>
+        <SignIn forceRedirectUrl='/dashboard' />
 
-    </div>
+      </div>
 
       {/* Bottom left corner */}
       <motion.div

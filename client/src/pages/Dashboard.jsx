@@ -90,6 +90,8 @@ export default function Dashboard() {
           userID: userID
         });
         console.log("Respose 1" + response.data);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setUserData(response.data.user);
         const response2 = await axios.post(`${DJANGO_URL}/api/analyze-carbon-footprint/`, {
           ...response.data.user
         })
