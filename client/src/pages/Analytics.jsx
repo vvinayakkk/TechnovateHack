@@ -10,7 +10,7 @@ import axios from 'axios';
 const DJANGO_URL = import.meta.env.VITE_DJANGO_URL;
 
 const Analytics = () => {
-  const [analysisData, setAnalysisData] = useState(JSON.parse(localStorage.getItem('MLData')));
+  const analysisData = JSON.parse(localStorage.getItem('MLData'))
 
   // Approximation of the error function (erf)
   const erf = (x) => {
@@ -32,20 +32,6 @@ const Analytics = () => {
 
     return sign * y;
   };
-
-  // const calculateAnalysis = async () => {
-  //   // Simulating API call with sample data
-  //   const sampleAnalysis = JSON.parse(localStorage.getItem('user'));
-  //   try {
-  //     const response2 = await axios.post(`${DJANGO_URL}/api/analyze-carbon-footprint/`, {
-  //       ...sampleAnalysis
-  //     })
-  //     console.log(response2.data);
-  //     setAnalysisData(response2.data);
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
 
   const getZScoreDescription = (stdDev) => {
     const abs = Math.abs(stdDev);
@@ -90,8 +76,8 @@ const Analytics = () => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-baseline mb-2">
-            <div className="text-2xl font-bold">{value.toFixed(1)}{unit}</div>
-            <div className="text-sm text-gray-500">mean: {mean.toFixed(1)}{unit}</div>
+            {value && <div className="text-2xl font-bold">{value.toFixed(1)}{unit}</div>}
+            {mean && <div className="text-sm text-gray-500">mean: {mean.toFixed(1)}{unit}</div>}
           </div>
           <div className={`text-sm font-medium ${getZScoreColor(zScore, inverted)}`}>
             {getZScoreDescription(zScore)}
@@ -101,7 +87,7 @@ const Analytics = () => {
           </div>
           <div className="mt-1 text-xs text-gray-500 flex justify-between">
             <span>0%</span>
-            <span>{percentile.toFixed(1)}%</span>
+            {percentile && <span>{percentile.toFixed(1)}%</span>}
             <span>100%</span>
           </div>
         </CardContent>
@@ -384,18 +370,20 @@ const Analytics = () => {
               <CardContent>
                 <div className="space-y-6">
                   {/* Immediate Actions */}
-                  {analysisData.recommendations.immediateActions?.length > 0 && (
+                  {analysisData.recommendations?.immediate_actions?.length > 0 && (
                     <div className="space-y-3">
                       <h3 className="text-sm font-semibold flex items-center gap-2">
                         <Clock className="h-4 w-4" />
                         Immediate Actions
                       </h3>
-                      {analysisData.recommendations.immediateActions.map((action, index) => (
+                      {analysisData.recommendations.immediate_actions.map((action, index) => (
                         <Alert key={index} className="shadow-sm">
                           <Info className="h-4 w-4" />
                           <AlertTitle className="flex items-center gap-2">
                             {action.action}
-                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(action.impact_level)}`}
+                            >
                               {action.impact_level} Impact
                             </span>
                           </AlertTitle>
@@ -408,18 +396,20 @@ const Analytics = () => {
                   )}
 
                   {/* Medium Term Goals */}
-                  {analysisData.recommendations.mediumTermGoals?.length > 0 && (
+                  {analysisData.recommendations?.medium_term_goals?.length > 0 && (
                     <div className="space-y-3">
                       <h3 className="text-sm font-semibold flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
                         Medium Term Goals
                       </h3>
-                      {analysisData.recommendations.mediumTermGoals.map((goal, index) => (
+                      {analysisData.recommendations.medium_term_goals.map((goal, index) => (
                         <Alert key={index} className="shadow-sm">
                           <Info className="h-4 w-4" />
                           <AlertTitle className="flex items-center gap-2">
                             {goal.action}
-                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(goal.impact_level)}`}
+                            >
                               {goal.impact_level} Impact
                             </span>
                           </AlertTitle>
@@ -432,18 +422,20 @@ const Analytics = () => {
                   )}
 
                   {/* Long Term Changes */}
-                  {analysisData.recommendations.longTermChanges?.length > 0 && (
+                  {analysisData.recommendations?.long_term_changes?.length > 0 && (
                     <div className="space-y-3">
                       <h3 className="text-sm font-semibold flex items-center gap-2">
                         <TrendingUp className="h-4 w-4" />
                         Long Term Changes
                       </h3>
-                      {analysisData.recommendations.longTermChanges.map((change, index) => (
+                      {analysisData.recommendations.long_term_changes.map((change, index) => (
                         <Alert key={index} className="shadow-sm">
                           <Info className="h-4 w-4" />
                           <AlertTitle className="flex items-center gap-2">
                             {change.action}
-                            <span className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}>
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${getImpactBadgeStyles(change.impact_level)}`}
+                            >
                               {change.impact_level} Impact
                             </span>
                           </AlertTitle>
@@ -458,6 +450,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </div>
+
         </>
       )}
     </div>

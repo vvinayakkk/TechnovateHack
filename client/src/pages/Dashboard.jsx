@@ -78,8 +78,6 @@ const radarData = [
 export default function Dashboard() {
   const { user } = useUser();
   const userID = user?.id;
-  console.log(user);
-  console.log(userID);
 
   useEffect(() => {
     const fetchUserData = async () => {

@@ -23,6 +23,7 @@ const Leaderboard = () => {
 
   const [appWideLeaderboardData, setAppWideLeaderboardData] = useState([]);
   const [friendsLeaderboardData, setFriendsLeaderboardData] = useState([]);
+  const user1 = JSON.parse(localStorage.getItem('user'))
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -30,13 +31,15 @@ const Leaderboard = () => {
         const response = await axios.get(`${SERVER_URL}/user/leaderboard`);
 
         const leaderboardData = response.data.users;
+        console.log("Leaderboard Data", leaderboardData);
+
 
         // Sort global leaderboard data by CO2 emissions in ascending order
         const globalData = leaderboardData
           .sort((a, b) => parseFloat(a.carbonEmission) - parseFloat(b.carbonEmission))
           .map((entry, index) => ({
             place: index + 1,
-            name: entry.name,
+            name: entry.fullName,
             carbonEmission: entry.carbonEmission
           }));
 
@@ -65,15 +68,6 @@ const Leaderboard = () => {
     setLeaderboardType(type);
   };
 
-  const accountData = {
-    name: user.fullName,
-    profileImage: user.imageUrl,
-    accountInfo: {
-      co2Reduction: '35%',
-      practices: 3,
-      impactScore: 88,
-    },
-  };
 
   const leaderboardData = leaderboardType === 'appWide' ? appWideLeaderboardData : friendsLeaderboardData;
 
@@ -84,16 +78,16 @@ const Leaderboard = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
         <div className="flex items-center mb-4 sm:mb-0">
           <img
-            src={accountData.profileImage}
+            src={user.imageUrl}
             alt="Profile"
             className="w-20 h-20 rounded-full mr-4 border-4 border-green-600 shadow-lg"
           />
           <div>
-            <h2 className="text-3xl font-bold text-green-800">{accountData.name}</h2>
+            <h2 className="text-3xl font-bold text-green-800">{user1.fullName}</h2>
             <div className="flex flex-col mt-2 text-sm text-gray-600">
-              <p>CO2 Reduction: {accountData.accountInfo.co2Reduction}</p>
-              <p>Sustainable Practices: {accountData.accountInfo.practices}</p>
-              <p>Impact Score: {accountData.accountInfo.impactScore}</p>
+              <p>CO2 Reduction: {user1.carbonEmission}</p>
+              {/* <p>Sustainable Practices: {user.fullName}</p>
+              <p>Impact Score: {user.userID}</p> */}
             </div>
           </div>
         </div>
@@ -237,15 +231,15 @@ const Leaderboard = () => {
             {/* Player Details */}
             <div className="mt-4 space-y-2">
               <p className="text-gray-700 dark:text-gray-300 font-medium">
-                <span className="font-bold text-gray-800 dark:text-gray-200">CO2 Reduction:</span> {player.co2Reduction}
+                <span className="font-bold text-gray-800 dark:text-gray-200">Carbon Emission:</span> {player.carbonEmission}
               </p>
-              <p className="text-gray-700 dark:text-gray-300 font-medium">
+              {/* <p className="text-gray-700 dark:text-gray-300 font-medium">
                 <span className="font-bold text-gray-800 dark:text-gray-200">Practices:</span> {player.practices}
-              </p>
+              </p> */}
             </div>
 
             {/* Impact Score Progress Bar */}
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">Impact Score</span>
                 <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{player.impactScore}%</span>
@@ -257,7 +251,7 @@ const Leaderboard = () => {
                   style={{ width: `${player.impactScore}%` }}
                 ></div>
               </div>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
@@ -269,26 +263,28 @@ const Leaderboard = () => {
           <table className="min-w-full bg-white dark:bg-gray-950 border border-gray-300 rounded-lg shadow-md">
             <thead className="sticky top-0 z-10 bg-green-100 dark:bg-green-950">
               <tr>
-                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Rank</th>
-                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">Name</th>
-                <th className="py-3 px-5 text-left font-semibold text-gray-700 dark:text-gray-300">CO₂ Emissions</th>
+                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Rank</th>
+                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Name</th>
+                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Carbon Emissions</th>
               </tr>
             </thead>
             <tbody>
               {leaderboardData.map((player, index) => (
                 <tr
                   key={player.place}
-                  className={`${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900'} hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
+                  className={`${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900'
+                    } hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
                   onClick={() => setSelectedPlayer(player)}
                 >
-                  <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td>
-                  <td className="py-3 px-5 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
-                  <td className="py-3 px-5 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td>
+                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td>
+                  <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
+                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
 
         {/* Player Profile Dialog */}
         {selectedPlayer && (
