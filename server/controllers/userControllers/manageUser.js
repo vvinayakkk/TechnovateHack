@@ -23,7 +23,8 @@ const createUser = async (req, res) => {
       howLongInternetDailyHour,
       energyEfficiency,
       recycling,
-      cookingWith
+      cookingWith,
+      fullName
     } = req.body;
   
     
@@ -47,7 +48,8 @@ const createUser = async (req, res) => {
       howLongInternetDailyHour,
       energyEfficiency,
       recycling,
-      cookingWith
+      cookingWith,
+      fullName
     });
 
     
