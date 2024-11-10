@@ -260,29 +260,31 @@ const Leaderboard = () => {
       <div>
         {/* Leaderboard Table Section */}
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white dark:bg-gray-950 border border-gray-300 rounded-lg shadow-md">
-            <thead className="sticky top-0 z-10 bg-green-100 dark:bg-green-950">
-              <tr>
-                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Rank</th>
-                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Name</th>
-                <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Carbon Emissions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboardData.map((player, index) => (
-                <tr
-                  key={player.place}
-                  className={`${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900'
-                    } hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
-                  onClick={() => setSelectedPlayer(player)}
-                >
-                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td>
-                  <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
-                  <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <table className="min-w-full bg-white dark:bg-gray-950 border border-gray-300 rounded-lg shadow-md">
+  <thead className="sticky top-0 z-10 bg-green-100 dark:bg-green-950">
+    <tr>
+      <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Rank</th>
+      <th className="py-3 px-6 text-left font-semibold text-gray-700 dark:text-gray-300">Name</th>
+      <th className="py-3 px-6 text-center font-semibold text-gray-700 dark:text-gray-300">Carbon Emissions</th> {/* Added text-center here */}
+    </tr>
+  </thead>
+  <tbody>
+    {leaderboardData.map((player, index) => (
+      <tr
+        key={player.place}
+        className={`${
+          index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-900'
+        } hover:bg-gray-100 dark:hover:bg-gray-700 transition-all cursor-pointer`}
+        onClick={() => setSelectedPlayer(player)}
+      >
+        <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.place}</td> {/* Add text-center to this column */}
+        <td className="py-3 px-6 border-b text-gray-700 dark:text-gray-300">{player.name}</td>
+        <td className="py-3 px-6 border-b text-center text-gray-700 dark:text-gray-300">{player.carbonEmission}</td> {/* Add text-center to this column */}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
         </div>
 
 
