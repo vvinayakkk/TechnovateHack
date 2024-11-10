@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mic, MicOff, Upload, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 const SmartInsights = () => {
   // Audio recording states
@@ -75,23 +76,59 @@ const SmartInsights = () => {
 
   const handleImageUpload = async (file) => {
     setIsProcessingImage(true);
+    setImageResponse(''); // Clear previous response if any
+
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('bill_file', file);
+      formData.append('bill_type', "electricity");
 
-      const response = await fetch('/api/process-image', {
+      const response = await fetch('http://192.168.137.37:8000/api/carbon-footprintimage/', {
         method: 'POST',
         body: formData,
       });
 
-      const data = await response.json();
-      setImageResponse(data.text);
+      if (!response.body) {
+        throw new Error('ReadableStream not supported in this browser.');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        result += decoder.decode(value, { stream: true });
+        setImageResponse(result); // Update the component's state to display the incremental response
+      }
+
+      // Parse the JSON response and remove unwanted fields
+      const finalData = JSON.parse(result);
+      console.log(finalData);
+
+      const { message, bill_id, analysis } = finalData;
+
+      const structuredData = {
+        message: message,
+        billId: bill_id,
+        utilityType: analysis.bill_summary.utility_type,
+        consumption: analysis.bill_summary.consumption,
+        carbonEmissions: analysis.environmental_impact.carbon_emissions,
+        carbonUnit: analysis.environmental_impact.unit,
+        analysisContent: analysis.analysis,
+      };
+
+      setImageResponse(structuredData);
     } catch (error) {
       console.error('Error uploading image:', error);
       setImageResponse('Error processing image');
     }
+
     setIsProcessingImage(false);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -111,11 +148,10 @@ const SmartInsights = () => {
                 <div className="relative">
                   <button
                     onClick={handleRecordClick}
-                    className={`p-4 rounded-full transition-all transform hover:scale-105 ${
-                      isRecording 
-                        ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
-                        : 'bg-blue-500 hover:bg-blue-600'
-                    }`}
+                    className={`p-4 rounded-full transition-all transform hover:scale-105 ${isRecording
+                      ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                      : 'bg-blue-500 hover:bg-blue-600'
+                      }`}
                   >
                     {isRecording ? (
                       <MicOff className="h-8 w-8 text-white" />
@@ -130,7 +166,7 @@ const SmartInsights = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {audioBlob && (
                   <div className="w-full">
                     <audio controls src={URL.createObjectURL(audioBlob)} className="w-full mt-4" />
@@ -206,8 +242,23 @@ const SmartInsights = () => {
 
                 {imageResponse && (
                   <div className="w-full mt-4 p-4 bg-white shadow-lg rounded-lg border border-gray-100">
-                    <h3 className="font-semibold mb-2 text-gray-700">Response:</h3>
-                    <p className="text-gray-600">{imageResponse}</p>
+                    {typeof imageResponse === 'string' ? (
+                      <p className="text-gray-600">{imageResponse}</p> // Display incremental response
+                    ) : (
+                      // Render the structured final response
+                      <>
+                        <h3 className="font-semibold mb-2 text-gray-700">Bill Processing Results</h3>
+                        <p><strong>Message:</strong> {imageResponse.message}</p>
+                        <p><strong>Bill ID:</strong> {imageResponse.billId}</p>
+                        <p><strong>Utility Type:</strong> {imageResponse.utilityType}</p>
+                        <p><strong>Consumption:</strong> {imageResponse.consumption} kWh</p>
+                        <p><strong>Carbon Emissions:</strong> {imageResponse.carbonEmissions} {imageResponse.carbonUnit}</p>
+                        <h4 className="font-semibold mt-4 text-gray-700">Detailed Analysis</h4>
+                        <div className="mt-2 whitespace-pre-line text-gray-600">
+                          <ReactMarkdown>{imageResponse.analysisContent}</ReactMarkdown>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>

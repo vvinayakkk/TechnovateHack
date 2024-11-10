@@ -66,11 +66,11 @@ const ProductComparison = () => {
 
   const impactData = [
     { month: 'Jan', regular: 100, green: 10, water_regular: 130, water_green: 30 },
-    { month: 'Feb', regular: 200, green: 20, water_regular: 260, water_green: 60 },
-    { month: 'Mar', regular: 300, green: 30, water_regular: 390, water_green: 90 },
-    { month: 'Apr', regular: 400, green: 40, water_regular: 520, water_green: 120 },
-    { month: 'May', regular: 500, green: 50, water_regular: 650, water_green: 150 },
-    { month: 'Jun', regular: 600, green: 60, water_regular: 780, water_green: 180 },
+    { month: 'Feb', regular: 180, green: 24, water_regular: 230, water_green: 67 },
+    { month: 'Mar', regular: 250, green: 30, water_regular: 280, water_green: 88 },
+    { month: 'Apr', regular: 220, green: 35, water_regular: 440, water_green: 140 },
+    { month: 'May', regular: 280, green: 50, water_regular: 650, water_green: 210 },
+    { month: 'Jun', regular: 330, green: 60, water_regular: 780, water_green: 240 },
   ];
 
 
