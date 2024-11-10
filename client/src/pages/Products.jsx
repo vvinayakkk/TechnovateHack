@@ -201,12 +201,8 @@ const ProductComparison = () => {
             </div>
           </div>
 
-          <div className='flex jus'>
-            <Button variant="secondary" onClick={
-              () => {
-                window.open(product.product_url, '_blank');
-              }
-            }>
+          <div className='flex justify-between'>
+            <Button variant="secondary" onClick={() => { window.open(product.product_url, '_blank') }}>
               <ShoppingCart className="w-4 h-4 mr-2" />
               Buy Now
             </Button>
