@@ -68,7 +68,7 @@ export default function CustomSignIn() {
         <span className="text-green-800 mt-2">Save the Planet</span>
       </motion.div>
     <div className='flex justify-center items-center w-full h-screen'>
-      <SignIn signInForceRedirectUrl='/moredetails' />
+      <SignIn forceRedirectUrl='/moredetails' />
 
     </div>
 
