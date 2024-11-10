@@ -24,10 +24,11 @@ const createUser = async (req, res) => {
       energyEfficiency,
       recycling,
       cookingWith,
-      fullName
+      fullName,
+      imageURL
     } = req.body;
-  
-    
+
+
     const newUser = new User({
       userID,
       bodyType,
@@ -49,10 +50,11 @@ const createUser = async (req, res) => {
       energyEfficiency,
       recycling,
       cookingWith,
-      fullName
+      fullName,
+      imageURL
     });
 
-    
+
     await newUser.save();
 
     res.status(201).json({
@@ -115,4 +117,4 @@ const leadearboard = async (req, res) => {
   }
 };
 
-export { createUser, getUser , leadearboard};
+export { createUser, getUser, leadearboard };

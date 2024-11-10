@@ -4,9 +4,11 @@ import Navbar from '../components/Navbar';
 import ThemeToggle from '../components/ThemeToggle';
 import User from '../components/User';
 import Navbar2 from '@/components/Navbar2';
+import { useUser } from '@clerk/clerk-react';
+
 
 const MainLayout = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user } = useUser();
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-800 dark:text-gray-200">
       <Navbar />
@@ -15,7 +17,7 @@ const MainLayout = () => {
         <div className="flex justify-center items-center gap-2">
           {/* <ThemeToggle /> */}
           <div className='mt-2 font-bold'>
-            {user.fullName}
+            {/* {user.fullName} */}
           </div>
           <User />
         </div>

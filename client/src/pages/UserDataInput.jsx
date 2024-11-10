@@ -85,8 +85,8 @@ const UserDataInput = () => {
       howOftenShower: randomShowerFrequency[Math.floor(Math.random() * randomShowerFrequency.length)],
       socialActivity: randomSocialActivity[Math.floor(Math.random() * randomSocialActivity.length)],
       energyEfficiency: formData.energyEfficiency || randomEnergyEfficiency[Math.floor(Math.random() * randomEnergyEfficiency.length)],
-      recycling: formData.recycling.length ? formData.recycling : ['Plastic'], 
-      cookingWith: formData.cookingWith.length ? formData.cookingWith : ['Stove'], 
+      recycling: formData.recycling.length ? formData.recycling : ['Plastic'],
+      cookingWith: formData.cookingWith.length ? formData.cookingWith : ['Stove'],
       wasteBagWeeklyCount: formData.wasteBagWeeklyCount || getRandomBetween1And30(),
       howLongTvpCDailyHour: formData.howLongTvpCDailyHour || getRandomBetween1And30(),
       howManyNewClothesMonthly: formData.howManyNewClothesMonthly || getRandomBetween1And30(),
@@ -121,6 +121,7 @@ const UserDataInput = () => {
       recycling: dataToSubmit.recycling,
       cookingWith: dataToSubmit.cookingWith,
       fullName: user.fullName,
+      imageURL: user.imageUrl,
     };
 
     console.log('Submitting form:', orderedData);
@@ -128,7 +129,7 @@ const UserDataInput = () => {
     try {
       const response = await axios.post(`${SERVER_URL}/user/create`, orderedData);
       console.log('Form submitted successfully:', response.data);
-      window.location.href = '/dashboard';  
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Error submitting form:', error);
     }
