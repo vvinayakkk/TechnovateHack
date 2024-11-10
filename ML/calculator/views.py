@@ -51,10 +51,14 @@ def preprocess_data(data):
     # Process categorical columns
     for col in categorical_cols:
         if col in data:
-            if isinstance(data[col], bool):
-                processed_data[col] = int(data[col])
+            # Handle None values in categorical columns
+            value = data[col]
+            if value is None:
+                processed_data[col] = 0  # Default value for None
+            elif isinstance(value, bool):
+                processed_data[col] = int(value)
             else:
-                processed_data[col] = le.fit_transform([str(data[col])])[0]
+                processed_data[col] = le.fit_transform([str(value)])[0]
     
     # Process numerical columns
     numerical_cols = ['monthlyGroceryBill', 'vehicleMonthlyDistanceKm', 'wasteBagWeeklyCount',
@@ -62,20 +66,31 @@ def preprocess_data(data):
     
     for col in numerical_cols:
         if col in data:
-            processed_data[col] = float(data[col])
+            # Handle None values in numerical columns
+            value = data[col]
+            if value is None:
+                processed_data[col] = 0.0  # Default value for None
+            else:
+                try:
+                    processed_data[col] = float(value)
+                except (ValueError, TypeError):
+                    # If conversion fails, use default value
+                    processed_data[col] = 0.0
     
     # Process array fields
     if 'recycling' in data:
-        processed_data['recycling_count'] = len(data['recycling'])
+        recycling_data = data['recycling']
+        processed_data['recycling_count'] = len(recycling_data) if recycling_data is not None else 0
+    
     if 'cookingWith' in data:
-        processed_data['cooking_methods_count'] = len(data['cookingWith'])
+        cooking_data = data['cookingWith']
+        processed_data['cooking_methods_count'] = len(cooking_data) if cooking_data is not None else 0
     
     # Ensure consistent order of features
     all_features = categorical_cols + numerical_cols + ['recycling_count', 'cooking_methods_count']
     ordered_data = [processed_data.get(feature, 0) for feature in all_features]
     
     return ordered_data
-
 def calculate_percentile_rank(value, population_values):
     """Calculate the percentile rank of a value in a population"""
     if len(population_values) == 0:
@@ -244,10 +259,12 @@ def store_analysis_results(db, analysis_data):
         update_data = {
             '$set': {
                 'lastUpdated': analysis_data['timestamp'],  # Update the last updated timestamp
+                'carbonEmission': analysis_data['carbonEmission'],
             },
             '$push': {
                 'analyses': {
                     'prediction': analysis_data['prediction'],
+                    'carbonEmission': analysis_data['carbonEmission'],
                     'timestamp': analysis_data['timestamp'],
                     'statistics': analysis_data['statistics'],
                     'metadata': analysis_data['metadata']
@@ -274,7 +291,18 @@ def store_analysis_results(db, analysis_data):
                 }
             }
         }
-        
+        if not user_doc or 'carbonEmission' not in user_doc:
+            update_data['$set']['initialCarbonEmission'] = analysis_data['carbonEmission']
+
+        if user_doc and 'carbonEmission' in user_doc:
+            previous_emission = user_doc['carbonEmission']
+            emission_change = analysis_data['carbonEmission'] - previous_emission
+            emission_change_percentage = (emission_change / previous_emission * 100) if previous_emission != 0 else 0
+            
+            update_data['$set'].update({
+                'emissionChange': emission_change,
+                'emissionChangePercentage': emission_change_percentage
+            })
         # Update the user document and append new data
         db.update_one(
             {'_id': user_id},
@@ -341,6 +369,7 @@ def analyze_carbon_footprint(request):
         response_data = {
             'success': True,
             'userId': str(object_id),
+            'carbonEmission': prediction,
             'prediction': prediction,
             'timestamp': datetime.now().isoformat(),
             'insights': insights,
