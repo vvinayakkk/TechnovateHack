@@ -96,7 +96,7 @@ const Navbar = () => {
                             <Link
                                 key={to}
                                 to={to}
-                                className="text-black dark:text-white hover:font-semibold text-lg"
+                                className="text-black flex items-center dark:text-white hover:font-semibold text-lg"
                                 onClick={closeMobileMenu}
                             >
                                 {icon} {text}

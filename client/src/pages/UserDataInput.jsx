@@ -62,6 +62,7 @@ const UserDataInput = () => {
     try {
       const response = await axios.post('http://localhost:3000/user/create', dataToSubmit);
       console.log('Form submitted successfully:', response.data);
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Error submitting form:', error);
     }
