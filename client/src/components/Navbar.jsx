@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, ShoppingCart,ChartArea ,Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf, CalendarSearch, LayoutDashboard, Medal, Car, MessageSquareDot } from 'lucide-react';
+import { Home, ShoppingCart,ChartArea ,Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf, CalendarSearch, LayoutDashboard, Medal, Car, MessageSquareDot, Clock } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import User from './User';
 
@@ -41,7 +41,8 @@ const Navbar = () => {
                         { to: '/leaderboard', icon: <Medal className="h-4 w-4 mr-2" />, text: 'Leaderboard' },
                         { to: '/map', icon: <Car className="h-4 w-4 mr-2" />, text: 'Car Pooling' },
                         { to: '/products', icon: <ShoppingCart className="h-4 w-4 mr-2" />, text: 'Products' },
-                        { to: '/analytics', icon: <ChartArea className="h-4 w-4 mr-2" />, text: 'Analytics' }
+                        { to: '/analytics', icon: <ChartArea className="h-4 w-4 mr-2" />, text: 'Analytics' },
+                        { to: '/smart-insights', icon: <Clock className="h-4 w-4 mr-2" />, text: 'Smart Insights' }
                         
                     ].map(({ to, icon, text }) => (
                         <div key={to} className="w-[85%] text-black dark:text-white py-2 px-4 rounded-lg transition duration-200 hover:bg-gray-300 dark:hover:bg-gray-700 hover:font-semibold">

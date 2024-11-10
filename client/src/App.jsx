@@ -16,6 +16,7 @@ import UserDataInput from './pages/UserDataInput';
 import CustomSignUp from './pages/CustomSignUp';
 import CustomSignIn from './pages/CustomSignIn';
 import Products from "./pages/Products";
+import SmartInsights from "./pages/SmartInsights";
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -64,6 +65,7 @@ const App = () => {
             <Route path="/donate" element={<Donations />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/smart-insights" element={<SmartInsights />} />
           </Route>
         </Route>
       </Routes>
