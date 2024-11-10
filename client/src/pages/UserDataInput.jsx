@@ -120,6 +120,7 @@ const UserDataInput = () => {
       energyEfficiency: dataToSubmit.energyEfficiency,
       recycling: dataToSubmit.recycling,
       cookingWith: dataToSubmit.cookingWith,
+      fullName: user.fullName,
     };
 
     console.log('Submitting form:', orderedData);
