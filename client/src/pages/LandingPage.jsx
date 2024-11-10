@@ -269,7 +269,7 @@ export default function CarbonTrackerLanding() {
                 className="text-base md:text-lg bg-green-500 hover:bg-green-600 text-white px-6 md:px-8 py-4 md:py-6 w-full sm:w-auto"
                 onClick={() => {
                   if (isSignedIn) {
-                    navigate('/dashboard');
+                    navigate('/moredetails');
                   } else {
                     navigate('/signup');
                   }
