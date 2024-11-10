@@ -6,13 +6,17 @@ import User from '../components/User';
 import Navbar2 from '@/components/Navbar2';
 
 const MainLayout = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-800 dark:text-gray-200">
       <Navbar />
       <header className="mb-5 lg:mb-1 pr-4 pt-3 flex justify-between items-center">
         <h1 className="text-2xl"></h1>
-        <div className="flex justify-around">
-          <ThemeToggle />
+        <div className="flex justify-center items-center gap-2">
+          {/* <ThemeToggle /> */}
+          <div className='mt-2 font-bold'>
+            {user.fullName}
+          </div>
           <User />
         </div>
       </header>
