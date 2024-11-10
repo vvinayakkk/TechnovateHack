@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, ShoppingCart,ChartArea ,Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf, CalendarSearch, LayoutDashboard, Medal, Car, MessageSquareDot, Clock, Brain } from 'lucide-react';
+import { Home, ShoppingCart,ChartArea ,Folder, FileText, BarChart, NotebookIcon, Atom, Menu, X, User2, Leaf, CalendarSearch, LayoutDashboard, Medal, Car, MessageSquareDot, Clock, Brain, HandCoins } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import User from './User';
 
@@ -42,6 +42,7 @@ const Navbar = () => {
                         { to: '/map', icon: <Car className="h-4 w-4 mr-2" />, text: 'Car Pooling' },
                         { to: '/products', icon: <ShoppingCart className="h-4 w-4 mr-2" />, text: 'Products' },
                         { to: '/analytics', icon: <ChartArea className="h-4 w-4 mr-2" />, text: 'Analytics' },
+                        { to: '/donate', icon: <HandCoins className="h-4 w-4 mr-2" />, text: 'Donations' },
                         { to: '/smart-insights', icon: <Brain className="h-4 w-4 mr-2" />, text: 'Smart Insights' }
                         
                     ].map(({ to, icon, text }) => (
@@ -71,7 +72,7 @@ const Navbar = () => {
                     </Link>
 
                     <div className="flex items-center space-x-3">
-                        <ThemeToggle />
+                        {/* <ThemeToggle /> */}
                         <button onClick={toggleMobileMenu} className="focus:outline-none">
                             {isMobileMenuOpen ? (
                                 <X className="h-6 w-6 text-black dark:text-white" />
