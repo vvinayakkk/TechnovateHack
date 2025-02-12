@@ -1,5 +1,6 @@
 # 🌱 PSO7: Your Sustainability Companion
 
+## 🏆 **Technovate Hackathon 5th Position**
 ## 🌍 Introduction
 **PSO7** isn't just an app; it's a **community-driven platform** dedicated to raising awareness and inspiring action against climate change. With a **360-degree approach**, we integrate personal tracking, reward systems, user events, and sustainable shopping tools to make **eco-friendly choices accessible, engaging, and impactful.**
 
